@@ -1,19 +1,6 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "cd frontend && npm run build",
   "outputDirectory": "frontend/build",
-  "env": {
-    "MONGO_URI": "@mongo_uri",
-    "JWT_SECRET": "@jwt_secret",
-    "PAYSTACK_SECRET_KEY": "@paystack_secret_key",
-    "PAYSTACK_MONTHLY_PLAN": "@paystack_monthly_plan",
-    "PAYSTACK_YEARLY_PLAN": "@paystack_yearly_plan"
-  },
-  "functions": {
-    "backend/src/index.js": {
-      "memory": 1024,
-      "maxDuration": 30
-    }
-  },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/backend/src/index.js" }
   ]
