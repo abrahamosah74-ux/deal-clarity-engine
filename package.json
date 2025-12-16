@@ -1,4 +1,10 @@
 {
+  "name": "deal-clarity-engine",
+  "version": "1.0.0",
+  "description": "Deal Clarity Engine - Sales CRM for tracking deals and commitments",
+  "author": "Your Name <your.email@example.com>",
+  "main": "public/electron.js",
+  "homepage": "./",
   "dependencies": {
     "ioredis": "^5.8.2",
     "rate-limit-redis": "^4.3.1"
