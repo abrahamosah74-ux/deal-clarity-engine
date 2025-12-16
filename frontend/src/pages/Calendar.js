@@ -33,32 +33,22 @@ const CalendarView = () => {
   const fetchCalendarEvents = async () => {
     try {
       setLoading(true);
-      // Mock data for testing
-      const mockEvents = [
-        {
-          id: 1,
-          title: 'Discovery Call - Acme Corp',
-          start: new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 10, 0).toISOString(),
-          end: new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 10, 30).toISOString(),
-          attendees: [{ name: 'John Smith' }, { name: 'Sarah Johnson' }],
-          onlineMeeting: true,
-          hasCommitments: true
-        },
-        {
-          id: 2,
-          title: 'Demo - TechStart Inc',
-          start: new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 14, 0).toISOString(),
-          end: new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 14, 45).toISOString(),
-          attendees: [{ name: 'Mike Chen' }],
-          onlineMeeting: true,
-          hasCommitments: false
+      // Fetch real events from API
+      const response = await api.get('/calendar/events', {
+        params: {
+          startDate: getStartDate().toISOString(),
+          endDate: getEndDate().toISOString()
         }
-      ];
-      setEvents(mockEvents);
+      });
+      setEvents(response.data || []);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching events:', error);
-      toast.error('Failed to load calendar events');
+      // Only show toast if not a 404 (which is expected for new users with no events)
+      if (error.response?.status !== 404) {
+        toast.error('Failed to load calendar events');
+      }
+      setEvents([]);
       setLoading(false);
     }
   };
