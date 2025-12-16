@@ -18,10 +18,25 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron-dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron-build": "npm run build && electron-builder",
+    "electron-build-win": "npm run build && electron-builder --win",
+    "electron-build-mac": "npm run build && electron-builder --mac",
+    "electron-build-linux": "npm run build && electron-builder --linux",
+    "electron-build-all": "npm run build && electron-builder -mwl"
   },
+  "homepage": "./",
+  "main": "public/electron.js",
   "devDependencies": {
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "electron": "latest",
+    "electron-builder": "latest",
+    "electron-is-dev": "^2.0.0",
+    "electron-log": "^4.4.8",
+    "electron-updater": "^5.3.0",
+    "concurrently": "^7.5.0",
+    "wait-on": "^7.0.1"
   },
   "browserslist": {
     "production": [

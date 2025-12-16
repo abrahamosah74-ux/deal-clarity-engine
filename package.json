@@ -2,5 +2,9 @@
   "dependencies": {
     "ioredis": "^5.8.2",
     "rate-limit-redis": "^4.3.1"
+  },
+  "devDependencies": {
+    "electron-is-dev": "^3.0.1",
+    "electron-log": "^5.4.3"
   }
 }

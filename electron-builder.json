@@ -1,0 +1,80 @@
+{
+  "appId": "com.dealclarity.engine",
+  "productName": "Deal Clarity Engine",
+  "directories": {
+    "buildResources": "assets",
+    "output": "dist"
+  },
+  "files": [
+    "build/**/*",
+    "node_modules/**/*",
+    "public/electron.js",
+    "public/preload.js",
+    "package.json"
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64",
+          "ia32"
+        ]
+      },
+      {
+        "target": "portable",
+        "arch": [
+          "x64"
+        ]
+      }
+    ],
+    "certificateFile": null,
+    "certificatePassword": null,
+    "signingHashAlgorithms": [
+      "sha256"
+    ]
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "Deal Clarity Engine"
+  },
+  "mac": {
+    "target": [
+      "dmg",
+      "zip"
+    ],
+    "category": "public.app-category.business",
+    "sign": null,
+    "notarize": false
+  },
+  "dmg": {
+    "contents": [
+      {
+        "x": 110,
+        "y": 150,
+        "type": "file"
+      },
+      {
+        "x": 240,
+        "y": 150,
+        "type": "link",
+        "path": "/Applications"
+      }
+    ]
+  },
+  "linux": {
+    "target": [
+      "AppImage",
+      "deb"
+    ],
+    "category": "Office"
+  },
+  "publish": {
+    "provider": "github",
+    "owner": "abrahamosah74-ux",
+    "repo": "deal-clarity-engine"
+  }
+}
