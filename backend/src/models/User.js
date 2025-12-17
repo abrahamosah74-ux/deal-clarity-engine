@@ -23,6 +23,14 @@ const UserSchema = new mongoose.Schema({
     enum: ['rep', 'manager', 'admin'],
     default: 'rep'
   },
+  teams: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Team'
+  }],
+  currentTeam: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Team'
+  },
   subscription: {
     status: {
       type: String,

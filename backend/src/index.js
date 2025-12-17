@@ -27,6 +27,7 @@ const noteRoutes = require('./routes/notes');
 const analyticsRoutes = require('./routes/analytics');
 const dealsRoutes = require('./routes/deals');
 const reportsRoutes = require('./routes/reports');
+const teamsRoutes = require('./routes/teams');
 
 const app = express();
 
@@ -117,6 +118,7 @@ app.use('/api/notes', noteRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/deals', dealsRoutes);
 app.use('/api/reports', reportsRoutes);
+app.use('/api/teams', teamsRoutes);
 
 // Welcome route
 app.get('/', (req, res) => {

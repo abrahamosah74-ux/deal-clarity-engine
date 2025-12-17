@@ -6,6 +6,11 @@ const DealSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  team: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Team',
+    required: true
+  },
   crmId: {
     type: String,
     required: true
