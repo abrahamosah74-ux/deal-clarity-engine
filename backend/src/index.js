@@ -7,9 +7,12 @@ const multer = require('multer');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const path = require('path');
+const http = require('http');
+const socketIO = require('socket.io');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
 const { connectDB } = require('./config/database');
+const SocketManager = require('./services/socketManager');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -29,8 +32,28 @@ const dealsRoutes = require('./routes/deals');
 const reportsRoutes = require('./routes/reports');
 const teamsRoutes = require('./routes/teams');
 const automationsRoutes = require('./routes/automations');
+const notificationsRoutes = require('./routes/notifications');
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIO(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    methods: ['GET', 'POST'],
+    credentials: true
+  },
+  transports: ['websocket', 'polling']
+});
+
+// Initialize Socket Manager
+const socketManager = new SocketManager(io);
+socketManager.initializeHandlers();
+
+// Make socketManager available to routes
+app.use((req, res, next) => {
+  req.socketManager = socketManager;
+  next();
+});
 
 // Connect to database
 connectDB().catch(err => {
@@ -121,6 +144,7 @@ app.use('/api/deals', dealsRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/teams', teamsRoutes);
 app.use('/api/automations', automationsRoutes);
+app.use('/api/notifications', notificationsRoutes);
 
 // Welcome route
 app.get('/', (req, res) => {
@@ -213,8 +237,9 @@ process.on('SIGTERM', () => {
 });
 
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`🚀 Backend running on port ${PORT}`);
   console.log(`📁 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
+  console.log(`🔌 WebSocket ready for real-time notifications`);
 });

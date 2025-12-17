@@ -15,12 +15,15 @@ import BulkImportExport from './pages/BulkImportExport';
 import EmailIntegration from './pages/EmailIntegration';
 import Reports from './pages/Reports';
 import Login from './pages/Auth/Login';
+import NotificationCenter from './components/Notifications/NotificationCenter';
+import { useNotifications } from './hooks/useNotifications';
 import './App.css';
 
 function Layout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
+  const { onNotification } = useNotifications(user?._id, user?.team);
 
   const isActive = (path) => location.pathname === path ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white' : 'text-gray-400 hover:text-white';
 
@@ -130,8 +133,15 @@ function Layout({ children }) {
       </nav>
       
       {/* Main Content */}
-      <div className="flex-1 overflow-auto">
-        {children}
+      <div className="flex-1 overflow-auto flex flex-col">
+        {/* Header with Notification Bell */}
+        <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-end shadow-sm">
+          <NotificationCenter userId={user?._id} teamId={user?.team} />
+        </div>
+        {/* Page Content */}
+        <div className="flex-1 overflow-auto">
+          {children}
+        </div>
       </div>
     </div>
   );
