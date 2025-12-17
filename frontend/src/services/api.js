@@ -1,8 +1,21 @@
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
-// Use VITE_API_URL for Vite projects, fallback to REACT_APP_API_URL for older configs
-const API_URL = import.meta.env.VITE_API_URL || process.env.REACT_APP_API_URL || 'https://deal-clarity-engine.onrender.com/api' || (typeof window !== 'undefined' && window.location.origin ? `${window.location.origin}/api` : 'http://localhost:5000/api');
+// Use VITE_API_URL for Vite projects
+const getApiUrl = () => {
+  // Production build with VITE_
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  // Development with VITE_
+  if (import.meta.env.DEV) {
+    return 'http://localhost:5000/api';
+  }
+  // Fallback for production
+  return 'https://deal-clarity-engine.onrender.com/api';
+};
+
+const API_URL = getApiUrl();
 
 // Create axios instance
 const api = axios.create({
@@ -51,17 +64,25 @@ api.interceptors.response.use(
     return response.data;
   },
   (error) => {
-    const { response } = error;
+    const { response, config, message } = error;
     
     console.error('❌ API Error:', {
       status: response?.status,
-      url: response?.config?.url,
+      statusText: response?.statusText,
+      url: config?.url || response?.config?.url,
+      baseURL: config?.baseURL,
       data: response?.data,
-      message: error.message
+      message: message,
+      fullError: error
+    });
+    
+    console.warn('🔍 API Configuration:', {
+      API_URL: API_URL,
+      environment: import.meta.env.MODE
     });
     
     if (!response) {
-      toast.error('Network error. Please check your connection.');
+      toast.error('Network error. Please check your connection and that the API is running at: ' + API_URL);
       return Promise.reject(new Error('Network error'));
     }
     
