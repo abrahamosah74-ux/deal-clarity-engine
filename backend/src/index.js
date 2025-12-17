@@ -51,12 +51,31 @@ app.use(helmet({
 }));
 
 // CORS configuration
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+const corsOptions = {
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-Timestamp']
-}));
+};
+
+// Dynamically set origin to allow all Vercel preview and production deployments
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'https://deal-clarity-engine.vercel.app', // Production
+  /https:\/\/deal-clarity-engine.*\.vercel\.app$/ // Preview deployments
+];
+
+corsOptions.origin = function(origin, callback) {
+  if (!origin || allowedOrigins.some(allowed => 
+    typeof allowed === 'string' ? allowed === origin : allowed.test(origin)
+  )) {
+    callback(null, true);
+  } else {
+    callback(new Error('Not allowed by CORS'));
+  }
+};
+
+app.use(cors(corsOptions));
 
 // Rate limiting (shared config)
 app.use('/api/', customLimiter);

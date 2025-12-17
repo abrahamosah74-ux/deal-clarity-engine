@@ -2,16 +2,13 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
 // Use REACT_APP_API_URL for Create React App (not Vite)
+// For production on Vercel, this MUST be hardcoded because env vars are only available at runtime, not build time
 const getApiUrl = () => {
-  // Production build with REACT_APP_
-  if (process.env.REACT_APP_API_URL) {
-    return process.env.REACT_APP_API_URL;
-  }
   // Development
   if (process.env.NODE_ENV === 'development') {
     return 'http://localhost:5000/api';
   }
-  // Fallback for production
+  // Production - must hardcode the Render API URL
   return 'https://deal-clarity-engine.onrender.com/api';
 };
 
