@@ -116,7 +116,7 @@ const SimpleKanban = () => {
             />
             <input
               type="number"
-              placeholder="Amount (GH₵)"
+              placeholder="Amount ($)"
               value={formData.amount}
               onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
               className="p-2 border border-gray-300 rounded"
@@ -197,7 +197,7 @@ const SimpleKanban = () => {
                         <p className="text-xs text-gray-600 mt-1">{deal.contact.name}</p>
                       )}
                       {deal.amount && (
-                        <p className="text-sm font-bold text-blue-600 mt-2">GH₵{deal.amount.toLocaleString()}</p>
+                        <p className="text-sm font-bold text-blue-600 mt-2">${deal.amount.toLocaleString()}</p>
                       )}
                     </div>
                     <FiMove className="text-gray-400" size={16} />
@@ -254,7 +254,7 @@ const SimpleKanban = () => {
           <div>
             <p className="text-gray-600">Total Pipeline Value</p>
             <p className="text-3xl font-bold text-green-600">
-              GH₵{deals.reduce((sum, d) => sum + (d.amount || 0), 0).toLocaleString()}
+              ${deals.reduce((sum, d) => sum + (d.amount || 0), 0).toLocaleString()}
             </p>
           </div>
           <div>

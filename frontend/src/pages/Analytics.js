@@ -67,7 +67,7 @@ const Analytics = () => {
               <div>
                 <p className="text-gray-600 text-sm">Total Revenue</p>
                 <p className="text-3xl font-bold text-green-600">
-                  GH₵{summary.deals.revenue?.toLocaleString()}
+                  ${summary.deals.revenue?.toLocaleString()}
                 </p>
               </div>
               <FiTrendingUp className="text-green-600" size={32} />
@@ -89,7 +89,7 @@ const Analytics = () => {
               <div>
                 <p className="text-gray-600 text-sm">Avg Deal Size</p>
                 <p className="text-3xl font-bold text-orange-600">
-                  GH₵{summary.deals.avgDealSize?.toLocaleString()}
+                  ${summary.deals.avgDealSize?.toLocaleString()}
                 </p>
               </div>
               <FiCheckCircle className="text-orange-600" size={32} />
@@ -140,7 +140,7 @@ const Analytics = () => {
                     </div>
                   </div>
                   <div className="text-right ml-4">
-                    <p className="font-bold">GH₵{stage.weightedAmount?.toLocaleString()}</p>
+                    <p className="font-bold">${stage.weightedAmount?.toLocaleString()}</p>
                     <p className="text-sm text-gray-600">{stage.count} deals</p>
                   </div>
                 </div>
@@ -149,7 +149,7 @@ const Analytics = () => {
             <div className="border-t pt-4 mt-4">
               <p className="text-gray-600">Total Forecast (Weighted):</p>
               <p className="text-4xl font-bold text-green-600">
-                GH₵{forecast.totalForecast?.toLocaleString()}
+                ${forecast.totalForecast?.toLocaleString()}
               </p>
             </div>
           </div>
@@ -170,7 +170,7 @@ const Analytics = () => {
                   )}
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-lg">GH₵{deal.amount?.toLocaleString()}</p>
+                  <p className="font-bold text-lg">${deal.amount?.toLocaleString()}</p>
                   <p className="text-sm text-gray-600 capitalize">{deal.stage}</p>
                   <div className="mt-1 flex gap-2">
                     <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">

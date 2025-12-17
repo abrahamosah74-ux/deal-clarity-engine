@@ -63,8 +63,8 @@ const Reports = () => {
 
       const summaryData = [
         ['Total Deals', analytics.totalDeals || 0],
-        ['Total Pipeline Value', `GH₵${(analytics.totalPipelineValue || 0).toLocaleString()}`],
-        ['Average Deal Size', `GH₵${(analytics.averageDealSize || 0).toLocaleString()}`],
+        ['Total Pipeline Value', `$${(analytics.totalPipelineValue || 0).toLocaleString()}`],
+        ['Average Deal Size', `$${(analytics.averageDealSize || 0).toLocaleString()}`],
         ['Total Contacts', analytics.totalContacts || 0],
         ['Active Tasks', analytics.activeTasks || 0]
       ];
@@ -110,7 +110,7 @@ const Reports = () => {
 
       const topDeals = deals.slice(0, 10).map(deal => [
         deal.name,
-        `GH₵${(deal.amount || 0).toLocaleString()}`,
+        `$${(deal.amount || 0).toLocaleString()}`,
         deal.stage,
         `${deal.probability || 0}%`
       ]);
@@ -265,7 +265,7 @@ const Reports = () => {
                   <FiDollarSign className="text-blue-600" />
                   <span className="text-sm text-gray-600">Pipeline Value</span>
                 </div>
-                <p className="text-2xl font-bold">GH₵{(analytics.totalPipelineValue || 0).toLocaleString()}</p>
+                <p className="text-2xl font-bold">${(analytics.totalPipelineValue || 0).toLocaleString()}</p>
               </div>
 
               <div className="bg-green-50 p-4 rounded-lg border border-green-200">
@@ -281,7 +281,7 @@ const Reports = () => {
                   <FiBarChart2 className="text-purple-600" />
                   <span className="text-sm text-gray-600">Avg Deal Size</span>
                 </div>
-                <p className="text-2xl font-bold">GH₵{(analytics.averageDealSize || 0).toLocaleString()}</p>
+                <p className="text-2xl font-bold">${(analytics.averageDealSize || 0).toLocaleString()}</p>
               </div>
             </>
           )}
