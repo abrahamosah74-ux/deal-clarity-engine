@@ -212,6 +212,9 @@ export const uploadAPI = {
 // Health check
 export const healthCheck = () => api.get('/health');
 
+// Export api instance as named export for newer components
+export { api };
+
 export default {
   // Default instance for custom requests
   instance: api,

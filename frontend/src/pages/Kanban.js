@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
-import { FiGripHorizontal, FiEdit2, FiTrash2, FiEye, FiPlus } from 'react-icons/fi';
+import { FiMove, FiEdit2, FiTrash2, FiEye, FiPlus } from 'react-icons/fi';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import './Kanban.css';
@@ -200,7 +200,7 @@ const SimpleKanban = () => {
                         <p className="text-sm font-bold text-blue-600 mt-2">GH₵{deal.amount.toLocaleString()}</p>
                       )}
                     </div>
-                    <FiGripHorizontal className="text-gray-400" size={16} />
+                    <FiMove className="text-gray-400" size={16} />
                   </div>
                   <div className="flex gap-2 mt-3 text-xs">
                     <span className="bg-gray-200 px-2 py-1 rounded">{deal.probability}%</span>

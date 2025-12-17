@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { api } from '../services/api';
-import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiMail, FiPhone, FiBuilding2 } from 'react-icons/fi';
+import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
 
 const Contacts = () => {
   const [contacts, setContacts] = useState([]);
@@ -276,7 +276,7 @@ const Contacts = () => {
                     )}
                     {contact.company && (
                       <div className="flex items-center gap-2">
-                        <FiBuilding2 size={16} /> {contact.company}
+                        <FiMapPin size={16} /> {contact.company}
                       </div>
                     )}
                     {contact.jobTitle && (

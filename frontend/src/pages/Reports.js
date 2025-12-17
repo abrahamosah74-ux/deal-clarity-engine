@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
-import { FiFileText, FiDownload, FiCalendar, FiDollarSign, FiTrendingUp, FiBarChart3 } from 'react-icons/fi';
+import { FiFileText, FiDownload, FiCalendar, FiDollarSign, FiTrendingUp, FiBarChart2 } from 'react-icons/fi';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -278,7 +278,7 @@ const Reports = () => {
 
               <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
                 <div className="flex items-center gap-2 mb-2">
-                  <FiBarChart3 className="text-purple-600" />
+                  <FiBarChart2 className="text-purple-600" />
                   <span className="text-sm text-gray-600">Avg Deal Size</span>
                 </div>
                 <p className="text-2xl font-bold">GH₵{(analytics.averageDealSize || 0).toLocaleString()}</p>
@@ -292,7 +292,7 @@ const Reports = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-lg shadow">
           <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <FiBarChart3 /> Sales Performance
+            <FiBarChart2 /> Sales Performance
           </h3>
           <ul className="space-y-2 text-sm text-gray-700 mb-4">
             <li>✓ Total revenue this period</li>
