@@ -1,8 +1,8 @@
 import api from './api';
 
-const PAYSTACK_PUBLIC_KEY = process.env.REACT_APP_PAYSTACK_PUBLIC_KEY;
-const MONTHLY_PLAN = process.env.REACT_APP_PAYSTACK_MONTHLY_PLAN;
-const ANNUAL_PLAN = process.env.REACT_APP_PAYSTACK_ANNUAL_PLAN;
+const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || process.env.REACT_APP_PAYSTACK_PUBLIC_KEY;
+const MONTHLY_PLAN = import.meta.env.VITE_PAYSTACK_MONTHLY_PLAN || process.env.REACT_APP_PAYSTACK_MONTHLY_PLAN;
+const ANNUAL_PLAN = import.meta.env.VITE_PAYSTACK_ANNUAL_PLAN || process.env.REACT_APP_PAYSTACK_ANNUAL_PLAN;
 
 // Log for debugging
 if (typeof window !== 'undefined') {

@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
-const API_URL = process.env.REACT_APP_API_URL || (typeof window !== 'undefined' && window.location.origin ? `${window.location.origin}/api` : 'http://localhost:5000/api');
+// Use VITE_API_URL for Vite projects, fallback to REACT_APP_API_URL for older configs
+const API_URL = import.meta.env.VITE_API_URL || process.env.REACT_APP_API_URL || 'https://deal-clarity-engine.onrender.com/api' || (typeof window !== 'undefined' && window.location.origin ? `${window.location.origin}/api` : 'http://localhost:5000/api');
 
 // Create axios instance
 const api = axios.create({
