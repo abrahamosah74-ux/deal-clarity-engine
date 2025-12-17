@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/dist",
+  "env": {
+    "VITE_API_URL": "@vite_api_url",
+    "VITE_PAYSTACK_PUBLIC_KEY": "@vite_paystack_public_key",
+    "VITE_PAYSTACK_MONTHLY_PLAN": "@vite_paystack_monthly_plan",
+    "VITE_PAYSTACK_ANNUAL_PLAN": "@vite_paystack_annual_plan"
+  },
+  "routes": [
+    {
+      "src": "/(?!api).*",
+      "dest": "/index.html"
+    }
+  ]
+}

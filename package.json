@@ -5,6 +5,10 @@
   "author": "Your Name <your.email@example.com>",
   "main": "public/electron.js",
   "homepage": "./",
+  "scripts": {
+    "build": "cd frontend && npm run build",
+    "dev": "concurrently \"cd frontend && npm run dev\" \"cd backend && npm start\""
+  },
   "dependencies": {
     "ioredis": "^5.8.2",
     "rate-limit-redis": "^4.3.1"
