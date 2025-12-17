@@ -1,14 +1,14 @@
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
-// Use VITE_API_URL for Vite projects
+// Use REACT_APP_API_URL for Create React App (not Vite)
 const getApiUrl = () => {
-  // Production build with VITE_
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
+  // Production build with REACT_APP_
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL;
   }
-  // Development with VITE_
-  if (import.meta.env.DEV) {
+  // Development
+  if (process.env.NODE_ENV === 'development') {
     return 'http://localhost:5000/api';
   }
   // Fallback for production
