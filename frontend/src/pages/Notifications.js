@@ -25,7 +25,7 @@ const Notifications = () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      const reminders = response.data.map(task => ({
+      const reminders = (response || []).map(task => ({
         ...task,
         daysUntilDue: Math.ceil((new Date(task.dueDate) - today) / (1000 * 60 * 60 * 24)),
         hoursUntilDue: Math.ceil((new Date(task.dueDate) - new Date()) / (1000 * 60 * 60))

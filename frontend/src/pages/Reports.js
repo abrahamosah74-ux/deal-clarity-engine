@@ -32,8 +32,8 @@ const Reports = () => {
 
   const fetchDeals = async () => {
     try {
-      const response = await api.get('/crm/deals');
-      setDeals(response.data.deals || []);
+      const response = await api.get('/deals');
+      setDeals(response.deals || []);
     } catch (error) {
       console.error('Error fetching deals:', error);
     }

@@ -22,7 +22,7 @@ const EmailIntegration = () => {
   const fetchContacts = async () => {
     try {
       const response = await api.get('/contacts?limit=1000');
-      setContacts(response.data.contacts || []);
+      setContacts(response.contacts || []);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching contacts:', error);

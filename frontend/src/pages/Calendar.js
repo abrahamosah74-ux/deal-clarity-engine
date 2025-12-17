@@ -34,10 +34,12 @@ const CalendarView = () => {
     try {
       setLoading(true);
       // Fetch real events from API
-      const response = await api.get('/calendar/events', {
+      const startDate = getStartDate().toISOString();
+      const endDate = getEndDate().toISOString();
+      const response = await api.instance.get('/calendar/events', {
         params: {
-          startDate: getStartDate().toISOString(),
-          endDate: getEndDate().toISOString()
+          startDate,
+          endDate
         }
       });
       setEvents(response.data || []);

@@ -39,7 +39,7 @@ const Contacts = () => {
   const fetchContacts = async () => {
     try {
       const response = await api.get('/contacts');
-      setContacts(response.data.contacts || []);
+      setContacts(response.contacts || []);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching contacts:', error);

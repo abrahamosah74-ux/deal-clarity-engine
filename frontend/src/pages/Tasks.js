@@ -28,7 +28,7 @@ const Tasks = () => {
   const fetchTasks = async () => {
     try {
       const response = await api.get(`/tasks?status=${filter}`);
-      setTasks(response.data.tasks || []);
+      setTasks(response.tasks || []);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching tasks:', error);
