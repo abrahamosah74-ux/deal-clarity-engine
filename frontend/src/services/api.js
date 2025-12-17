@@ -78,7 +78,7 @@ api.interceptors.response.use(
     
     console.warn('🔍 API Configuration:', {
       API_URL: API_URL,
-      environment: import.meta.env.MODE
+      environment: process.env.NODE_ENV
     });
     
     if (!response) {
