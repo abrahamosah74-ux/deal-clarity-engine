@@ -4,7 +4,11 @@ import { toast } from 'react-hot-toast';
 // Use REACT_APP_API_URL for Create React App (not Vite)
 // For production on Vercel, this MUST be hardcoded because env vars are only available at runtime, not build time
 const getApiUrl = () => {
-  // Development
+  // If localhost is in the window href, use local backend
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'http://localhost:5000/api';
+  }
+  // Development check (npm start)
   if (process.env.NODE_ENV === 'development') {
     return 'http://localhost:5000/api';
   }

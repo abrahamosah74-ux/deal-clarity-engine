@@ -39,7 +39,7 @@ export default function SignupScreen() {
       setIsLoading(true);
       setError('');
 
-      await api.apiClient.post('/auth/register', {
+      await api.register({
         firstName,
         lastName,
         email,

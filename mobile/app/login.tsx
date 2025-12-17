@@ -28,7 +28,7 @@ export default function LoginScreen() {
     try {
       await login(email, password);
       router.replace('/(tabs)');
-    } catch (err) {
+    } catch (_err: any) {
       // Error is handled by store
     }
   };

@@ -1,5 +1,5 @@
 // mobile/services/socketService.ts
-import io, { Socket } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 import * as SecureStore from 'expo-secure-store';
 import { useNotificationsStore } from '../stores/notificationsStore';
 

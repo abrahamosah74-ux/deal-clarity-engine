@@ -50,7 +50,7 @@ export default function CreateDealScreen() {
         team: user?.team,
       });
       router.push('/(tabs)/deals');
-    } catch (err) {
+    } catch (_err) {
       // Error handled by store
     }
   };

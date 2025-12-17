@@ -9,8 +9,9 @@ router.get('/events', auth, async (req, res) => {
   try {
     const { startDate, endDate, maxResults = 50 } = req.query;
     
+    // If calendar not connected, return empty array instead of error
     if (!req.user.integrations?.calendar?.accessToken) {
-      return res.status(400).json({ error: 'Calendar not connected' });
+      return res.json([]);
     }
     
     const events = await fetchCalendarEvents(

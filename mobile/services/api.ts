@@ -48,6 +48,15 @@ export const api = {
     await SecureStore.deleteItemAsync('authToken');
   },
 
+  register: async (userData: any) => {
+    const response = await apiClient.post('/auth/register', userData);
+    const { token } = response.data;
+    if (token) {
+      await SecureStore.setItemAsync('authToken', token);
+    }
+    return response.data;
+  },
+
   // Deals
   getDeals: async (filters?: any) => {
     return apiClient.get('/deals', { params: filters });

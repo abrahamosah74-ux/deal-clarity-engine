@@ -34,7 +34,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (email: string, password: string) => {
     try {
       set({ isLoading: true, error: null });
-      const response = await api.login(email, password);
+      await api.login(email, password);
       const profileResponse = await api.getProfile();
       
       set({
@@ -84,7 +84,7 @@ export const useAuthStore = create<AuthState>((set) => ({
           isLoading: false,
         });
       }
-    } catch (error) {
+    } catch (_error: any) {
       set({
         user: null,
         isSignedIn: false,
