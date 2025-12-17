@@ -1,11 +1,14 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import { FiBarChart2, FiCalendar, FiSettings, FiLogOut, FiCreditCard } from 'react-icons/fi';
+import { FiBarChart2, FiCalendar, FiSettings, FiLogOut, FiCreditCard, FiUsers, FiCheckSquare, FiTrendingUp } from 'react-icons/fi';
 import { useAuth, AuthProvider } from './contexts/AuthContext';
 import ManagerView from './components/Dashboard/ManagerView';
 import Calendar from './pages/Calendar';
 import Settings from './pages/Settings';
 import Subscriptions from './pages/Subscriptions';
+import Contacts from './pages/Contacts';
+import Tasks from './pages/Tasks';
+import Analytics from './pages/Analytics';
 import Login from './pages/Auth/Login';
 import './App.css';
 
@@ -39,6 +42,24 @@ function Layout({ children }) {
             <Link to="/" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/')}`}>
               <FiBarChart2 size={20} />
               Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link to="/analytics" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/analytics')}`}>
+              <FiTrendingUp size={20} />
+              Analytics
+            </Link>
+          </li>
+          <li>
+            <Link to="/contacts" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/contacts')}`}>
+              <FiUsers size={20} />
+              Contacts
+            </Link>
+          </li>
+          <li>
+            <Link to="/tasks" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/tasks')}`}>
+              <FiCheckSquare size={20} />
+              Tasks
             </Link>
           </li>
           <li>
@@ -123,6 +144,9 @@ function AppRoutes() {
       {user ? (
         <>
           <Route path="/" element={<Layout><ManagerView /></Layout>} />
+          <Route path="/analytics" element={<Layout><Analytics /></Layout>} />
+          <Route path="/contacts" element={<Layout><Contacts /></Layout>} />
+          <Route path="/tasks" element={<Layout><Tasks /></Layout>} />
           <Route path="/calendar" element={<Layout><Calendar /></Layout>} />
           <Route path="/subscriptions" element={<Layout><Subscriptions /></Layout>} />
           <Route path="/settings" element={<Layout><Settings /></Layout>} />

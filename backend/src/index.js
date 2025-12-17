@@ -21,6 +21,10 @@ const subscriptionRoutes = require('./routes/subscriptions');
 const managerRoutes = require('./routes/manager');
 const uploadRoutes = require('./routes/upload');
 const healthRoutes = require('./routes/health');
+const contactRoutes = require('./routes/contacts');
+const taskRoutes = require('./routes/tasks');
+const noteRoutes = require('./routes/notes');
+const analyticsRoutes = require('./routes/analytics');
 
 const app = express();
 
@@ -86,6 +90,10 @@ app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/manager', managerRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/health', healthRoutes);
+app.use('/api/contacts', contactRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/notes', noteRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Welcome route
 app.get('/', (req, res) => {
