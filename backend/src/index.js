@@ -25,6 +25,8 @@ const contactRoutes = require('./routes/contacts');
 const taskRoutes = require('./routes/tasks');
 const noteRoutes = require('./routes/notes');
 const analyticsRoutes = require('./routes/analytics');
+const dealsRoutes = require('./routes/deals');
+const reportsRoutes = require('./routes/reports');
 
 const app = express();
 
@@ -94,6 +96,8 @@ app.use('/api/contacts', contactRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/notes', noteRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/deals', dealsRoutes);
+app.use('/api/reports', reportsRoutes);
 
 // Welcome route
 app.get('/', (req, res) => {

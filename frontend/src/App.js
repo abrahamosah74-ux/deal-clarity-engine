@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import { FiBarChart2, FiCalendar, FiSettings, FiLogOut, FiCreditCard, FiUsers, FiCheckSquare, FiTrendingUp } from 'react-icons/fi';
+import { FiBarChart2, FiCalendar, FiSettings, FiLogOut, FiCreditCard, FiUsers, FiCheckSquare, FiTrendingUp, FiColumns, FiBell, FiUpload, FiMail, FiFileText } from 'react-icons/fi';
 import { useAuth, AuthProvider } from './contexts/AuthContext';
 import ManagerView from './components/Dashboard/ManagerView';
 import Calendar from './pages/Calendar';
@@ -9,6 +9,11 @@ import Subscriptions from './pages/Subscriptions';
 import Contacts from './pages/Contacts';
 import Tasks from './pages/Tasks';
 import Analytics from './pages/Analytics';
+import Kanban from './pages/Kanban';
+import Notifications from './pages/Notifications';
+import BulkImportExport from './pages/BulkImportExport';
+import EmailIntegration from './pages/EmailIntegration';
+import Reports from './pages/Reports';
 import Login from './pages/Auth/Login';
 import './App.css';
 
@@ -51,6 +56,12 @@ function Layout({ children }) {
             </Link>
           </li>
           <li>
+            <Link to="/kanban" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/kanban')}`}>
+              <FiColumns size={20} />
+              Pipeline
+            </Link>
+          </li>
+          <li>
             <Link to="/contacts" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/contacts')}`}>
               <FiUsers size={20} />
               Contacts
@@ -63,9 +74,33 @@ function Layout({ children }) {
             </Link>
           </li>
           <li>
+            <Link to="/notifications" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/notifications')}`}>
+              <FiBell size={20} />
+              Notifications
+            </Link>
+          </li>
+          <li>
             <Link to="/calendar" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/calendar')}`}>
               <FiCalendar size={20} />
               Calendar
+            </Link>
+          </li>
+          <li>
+            <Link to="/import-export" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/import-export')}`}>
+              <FiUpload size={20} />
+              Import/Export
+            </Link>
+          </li>
+          <li>
+            <Link to="/email" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/email')}`}>
+              <FiMail size={20} />
+              Email
+            </Link>
+          </li>
+          <li>
+            <Link to="/reports" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/reports')}`}>
+              <FiFileText size={20} />
+              Reports
             </Link>
           </li>
           <li>
@@ -145,9 +180,14 @@ function AppRoutes() {
         <>
           <Route path="/" element={<Layout><ManagerView /></Layout>} />
           <Route path="/analytics" element={<Layout><Analytics /></Layout>} />
+          <Route path="/kanban" element={<Layout><Kanban /></Layout>} />
           <Route path="/contacts" element={<Layout><Contacts /></Layout>} />
           <Route path="/tasks" element={<Layout><Tasks /></Layout>} />
+          <Route path="/notifications" element={<Layout><Notifications /></Layout>} />
           <Route path="/calendar" element={<Layout><Calendar /></Layout>} />
+          <Route path="/import-export" element={<Layout><BulkImportExport /></Layout>} />
+          <Route path="/email" element={<Layout><EmailIntegration /></Layout>} />
+          <Route path="/reports" element={<Layout><Reports /></Layout>} />
           <Route path="/subscriptions" element={<Layout><Subscriptions /></Layout>} />
           <Route path="/settings" element={<Layout><Settings /></Layout>} />
           <Route path="/login" element={<Login />} />
