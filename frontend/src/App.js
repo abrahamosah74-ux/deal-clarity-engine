@@ -14,6 +14,7 @@ import Notifications from './pages/Notifications';
 import BulkImportExport from './pages/BulkImportExport';
 import EmailIntegration from './pages/EmailIntegration';
 import Reports from './pages/Reports';
+import Landing from './pages/Landing';
 import Login from './pages/Auth/Login';
 import NotificationCenter from './components/Notifications/NotificationCenter';
 import { useNotifications } from './hooks/useNotifications';
@@ -203,7 +204,11 @@ function AppRoutes() {
           <Route path="/login" element={<Login />} />
         </>
       ) : (
-        <Route path="*" element={<Login />} />
+        <>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<Landing />} />
+        </>
       )}
     </Routes>
   );

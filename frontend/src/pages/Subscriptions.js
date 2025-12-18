@@ -88,19 +88,29 @@ const Subscriptions = () => {
       return;
     }
 
-    // Direct Paystack shop links - bypass reference issue
-    const paystackLinks = {
-      monthly: 'https://paystack.shop/pay/dbrgpheeqc',
-      yearly: 'https://paystack.shop/pay/j-1wh5btbx'
-    };
+    setLoading(true);
+    try {
+      // Direct Paystack shop links with success/cancel redirects
+      const paystackLinks = {
+        monthly: `https://paystack.shop/pay/dbrgpheeqc?email=${encodeURIComponent(user.email)}&redirect_url=${encodeURIComponent(window.location.origin + '/dashboard?upgrade=success')}`,
+        yearly: `https://paystack.shop/pay/j-1wh5btbx?email=${encodeURIComponent(user.email)}&redirect_url=${encodeURIComponent(window.location.origin + '/dashboard?upgrade=success')}`
+      };
 
-    const link = paystackLinks[planType];
-    if (link) {
-      console.log(`🔗 Redirecting to Paystack shop: ${link}`);
-      window.open(link, '_blank');
-      toast.success('Opening payment page...');
-    } else {
-      toast.error('Invalid plan selected');
+      const link = paystackLinks[planType];
+      if (link) {
+        console.log(`🔗 Redirecting to Paystack shop: ${link}`);
+        toast.success('Opening payment portal...');
+        // Store plan type for post-payment verification
+        localStorage.setItem('pendingUpgradePlan', planType);
+        window.location.href = link;
+      } else {
+        toast.error('Invalid plan selected');
+      }
+    } catch (error) {
+      console.error('Upgrade error:', error);
+      toast.error('Failed to process upgrade');
+    } finally {
+      setLoading(false);
     }
   };
 
