@@ -87,7 +87,10 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:3001',
   'https://deal-clarity-engine.vercel.app', // Production
-  /https:\/\/deal-clarity-engine.*\.vercel\.app$/ // Preview deployments
+  'https://dealclarity-engine.vercel.app', // Alternative production URL
+  'https://dealclarity-engine.vercel.app', // Another variant
+  /https:\/\/deal-clarity-engine.*\.vercel\.app$/, // Preview deployments
+  /https:\/\/dealclarity-engine.*\.vercel\.app$/ // Alternative preview
 ];
 
 corsOptions.origin = function(origin, callback) {

@@ -1,13 +1,27 @@
 // mobile/services/api.ts
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import Constants from 'expo-constants';
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://deal-clarity-engine.onrender.com/api';
+// Prefer explicit env var, otherwise derive local host from Expo debugger host when available
+const defaultProd = 'https://deal-clarity-engine.onrender.com/api';
+let API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || defaultProd;
+
+// NOTE: In local development it's often useful to point the app at a local backend
+// (using Expo debuggerHost). However if your phone isn't on the same LAN this
+// will fail with DNS/network errors. To avoid blocking testing from mobile devices
+// we default to the production API unless `EXPO_PUBLIC_API_URL` is explicitly set.
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 30000,
 });
+
+// Debug: print resolved base URL at module load
+if (__DEV__) {
+  // eslint-disable-next-line no-console
+  console.log('[mobile/services/api] API_BASE_URL =', API_BASE_URL);
+}
 
 // Add auth token to requests
 apiClient.interceptors.request.use(
@@ -16,9 +30,17 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    if (__DEV__) {
+      // eslint-disable-next-line no-console
+      console.log('[mobile/services/api] request:', config.method, config.baseURL + config.url);
+    }
     return config;
   },
   (error) => {
+    if (__DEV__) {
+      // eslint-disable-next-line no-console
+      console.error('[mobile/services/api] request error:', error?.message || error);
+    }
     return Promise.reject(error);
   }
 );
@@ -27,8 +49,18 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
+    if (__DEV__) {
+      // eslint-disable-next-line no-console
+      console.error('[mobile/services/api] response error:', {
+        message: error?.message,
+        code: error?.code,
+        status: error?.response?.status,
+        url: error?.config?.baseURL + error?.config?.url,
+        request: !!error?.request,
+        data: error?.response?.data
+      });
+    }
     if (error.response?.status === 401) {
-      // Clear token and redirect to login
       await SecureStore.deleteItemAsync('authToken');
     }
     return Promise.reject(error);
@@ -162,3 +194,14 @@ export const api = {
 };
 
 export default apiClient;
+
+// Helper to extract a friendly error message from axios errors
+export function getErrorMessage(err: any): string {
+  const serverMsg = err?.response?.data?.error || err?.response?.data?.message;
+  const msg = serverMsg || err?.message || 'Request failed';
+  if (__DEV__) {
+    // eslint-disable-next-line no-console
+    console.error('[mobile/services/api] parsed error message:', msg, { raw: err });
+  }
+  return msg;
+}

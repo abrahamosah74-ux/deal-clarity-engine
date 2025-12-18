@@ -11,7 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import { router } from 'expo-router';
-import { api } from '@/services/api';
+import { api, getErrorMessage } from '@/services/api';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 
@@ -40,17 +40,16 @@ export default function SignupScreen() {
       setError('');
 
       await api.register({
-        firstName,
-        lastName,
+        name: `${firstName} ${lastName}`,
         email,
         password,
+        company: 'Personal',
       });
 
       router.replace('/login');
     } catch (err: any) {
-      setError(
-        err.response?.data?.message || 'Failed to create account'
-      );
+      const friendly = getErrorMessage(err);
+      setError(friendly || 'Failed to create account');
     } finally {
       setIsLoading(false);
     }

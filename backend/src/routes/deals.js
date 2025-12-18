@@ -7,6 +7,8 @@ const Task = require('../models/Task');
 
 // Get all deals for a user
 router.get('/', auth, async (req, res) => {
+  // Log incoming requests for debugging device/backend connectivity
+  console.log(`[deals route] incoming GET /api/deals from userId=${req.userId} query=${JSON.stringify(req.query)}`);
   try {
     const { stage, status, sort } = req.query;
     let query = { userId: req.userId };
