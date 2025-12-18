@@ -17,8 +17,10 @@ const Subscriptions = () => {
     free: {
       name: 'Free',
       price: 0,
+      priceUSD: '$0',
       period: 'forever',
       description: 'Perfect for getting started',
+      headline: 'Test the basics',
       features: [
         { name: 'Up to 5 deals', included: true },
         { name: 'Basic commitment tracking', included: true },
@@ -33,8 +35,10 @@ const Subscriptions = () => {
     monthly: {
       name: 'Pro Monthly',
       price: 349,
+      priceUSD: '$29',
       period: 'month',
       description: 'Most popular for sales teams',
+      headline: 'Automate your entire sales process',
       features: [
         { name: 'Unlimited deals', included: true },
         { name: 'Commitment tracking', included: true },
@@ -44,13 +48,16 @@ const Subscriptions = () => {
         { name: 'Email support', included: true }
       ],
       cta: 'Upgrade Now',
-      buttonStyle: 'primary'
+      buttonStyle: 'primary',
+      savingsPercent: '17%'
     },
     yearly: {
       name: 'Pro Yearly',
       price: 3490,
+      priceUSD: '$290',
       period: 'year',
-      description: 'Best value - Save 2 months',
+      description: 'Best value plan',
+      headline: 'Scale your sales with confidence',
       features: [
         { name: 'Unlimited deals', included: true },
         { name: 'Commitment tracking', included: true },
@@ -61,7 +68,7 @@ const Subscriptions = () => {
       ],
       cta: 'Upgrade Now',
       buttonStyle: 'primary',
-      badge: 'Save 2 months'
+      badge: 'Save 17%'
     }
   });
 
@@ -125,11 +132,11 @@ const Subscriptions = () => {
   };
 
   const formatPrice = (amount) => {
-    return new Intl.NumberFormat('en-GH', {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'GHS',
+      currency: 'USD',
       minimumFractionDigits: 0
-    }).format(amount);
+    }).format(amount / 12); // Convert to monthly equivalent for display
   };
 
   return (
@@ -177,6 +184,13 @@ const Subscriptions = () => {
           </div>
         )}
 
+        {/* Social Proof */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-6 text-center mb-12">
+          <p className="text-lg font-semibold text-gray-900">
+            ⭐ <span className="text-blue-600">Over 120 teams</span> use Deal Clarity to manage their pipeline
+          </p>
+        </div>
+
         {/* Plans Grid */}
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           {/* Free Plan */}
@@ -187,7 +201,8 @@ const Subscriptions = () => {
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
                 {plans.free.name}
               </h3>
-              <p className="text-gray-600 text-sm mb-6">{plans.free.description}</p>
+              <p className="text-gray-600 text-sm mb-2">{plans.free.description}</p>
+              <p className="text-blue-600 font-semibold text-sm mb-6">{plans.free.headline}</p>
               
               <div className="mb-8">
                 <div className="flex items-baseline">
@@ -237,16 +252,16 @@ const Subscriptions = () => {
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
                 {plans.monthly.name}
               </h3>
-              <p className="text-gray-600 text-sm mb-6">{plans.monthly.description}</p>
+              <p className="text-gray-600 text-sm mb-2">{plans.monthly.description}</p>
+              <p className="text-blue-600 font-semibold text-sm mb-6">{plans.monthly.headline}</p>
               
               <div className="mb-8">
                 <div className="flex items-baseline">
                   <span className="text-5xl font-bold text-gray-900">
-                    {formatPrice(plans.monthly.price)}
+                    {plans.monthly.priceUSD}
                   </span>
                   <span className="text-gray-600 ml-2">/{plans.monthly.period}</span>
                 </div>
-                <p className="text-gray-500 text-sm font-bold mt-2">$29 USD</p>
               </div>
 
               {isCurrentPlan('monthly') && (
@@ -301,19 +316,16 @@ const Subscriptions = () => {
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
                 {plans.yearly.name}
               </h3>
-              <p className="text-gray-600 text-sm mb-6">{plans.yearly.description}</p>
+              <p className="text-gray-600 text-sm mb-2">{plans.yearly.description}</p>
+              <p className="text-green-600 font-semibold text-sm mb-6">{plans.yearly.headline}</p>
               
               <div className="mb-8">
                 <div className="flex items-baseline">
                   <span className="text-5xl font-bold text-gray-900">
-                    {formatPrice(plans.yearly.price)}
+                    {plans.yearly.priceUSD}
                   </span>
                   <span className="text-gray-600 ml-2">/{plans.yearly.period}</span>
                 </div>
-                <p className="text-gray-500 text-sm font-bold mt-2">$290 USD</p>
-                <p className="text-green-600 font-semibold mt-2">
-                  Save {formatPrice(plans.monthly.price * 12 - plans.yearly.price)}/year
-                </p>
               </div>
 
               {isCurrentPlan('yearly') && (
@@ -326,7 +338,7 @@ const Subscriptions = () => {
                 <button
                   onClick={() => handleUpgrade('yearly')}
                   disabled={loading}
-                  className="w-full py-3 px-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-400 text-white rounded-lg font-bold mb-8 flex items-center justify-center transition-all"
+                  className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-400 text-white rounded-lg font-bold mb-8 flex items-center justify-center transition-all shadow-lg"
                 >
                   {loading ? 'Processing...' : (
                     <>
