@@ -89,6 +89,7 @@ const allowedOrigins = [
   'https://deal-clarity-engine.vercel.app', // Production
   'https://dealclarity-engine.vercel.app', // Alternative production URL
   'https://dealclarity-engine.vercel.app', // Another variant
+  'https://app.deal-clarity.com', // Custom domain
   /https:\/\/deal-clarity-engine.*\.vercel\.app$/, // Preview deployments
   /https:\/\/dealclarity-engine.*\.vercel\.app$/ // Alternative preview
 ];
