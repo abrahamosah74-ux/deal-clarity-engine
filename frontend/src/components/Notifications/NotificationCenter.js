@@ -41,12 +41,12 @@ const NotificationCenter = ({ userId, teamId }) => {
       });
 
       if (page === 0) {
-        setNotifications(response.data.notifications);
+        setNotifications(response.notifications);
       } else {
-        setNotifications(prev => [...prev, ...response.data.notifications]);
+        setNotifications(prev => [...prev, ...response.notifications]);
       }
 
-      setUnreadCount(response.data.unreadCount);
+      setUnreadCount(response.unreadCount);
     } catch (error) {
       console.error('Failed to fetch notifications:', error);
     } finally {
