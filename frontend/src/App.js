@@ -13,6 +13,7 @@ import Kanban from './pages/Kanban';
 import Notifications from './pages/Notifications';
 import BulkImportExport from './pages/BulkImportExport';
 import EmailIntegration from './pages/EmailIntegration';
+import EmailTemplates from './pages/EmailTemplates';
 import Reports from './pages/Reports';
 import Landing from './pages/Landing';
 import Login from './pages/Auth/Login';
@@ -105,6 +106,12 @@ function Layout({ children }) {
             <Link to="/reports" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/reports')}`}>
               <FiFileText size={20} />
               Reports
+            </Link>
+          </li>
+          <li>
+            <Link to="/email-templates" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/email-templates')}`}>
+              <FiMail size={20} />
+              Email Templates
             </Link>
           </li>
           <li>
@@ -206,6 +213,7 @@ function AppRoutes() {
               <Route path="/calendar" element={<Layout><Calendar /></Layout>} />
               <Route path="/import-export" element={<Layout><BulkImportExport /></Layout>} />
               <Route path="/email" element={<Layout><EmailIntegration /></Layout>} />
+              <Route path="/email-templates" element={<Layout><EmailTemplates /></Layout>} />
               <Route path="/reports" element={<Layout><Reports /></Layout>} />
             </>
           ) : (
