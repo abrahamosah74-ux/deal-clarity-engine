@@ -7,9 +7,11 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "lib": ["es2020", "dom"],
+    "target": "es2020",
+    "module": "esnext",
     "paths": {
       "@/*": [
         "./*"

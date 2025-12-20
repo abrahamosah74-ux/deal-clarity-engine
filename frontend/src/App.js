@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { FiBarChart2, FiCalendar, FiSettings, FiLogOut, FiCreditCard, FiUsers, FiCheckSquare, FiTrendingUp, FiColumns, FiBell, FiUpload, FiMail, FiFileText } from 'react-icons/fi';
 import { useAuth, AuthProvider } from './contexts/AuthContext';
 import ManagerView from './components/Dashboard/ManagerView';
@@ -185,20 +185,34 @@ function AppRoutes() {
     );
   }
 
+  // Helper function to check if user has active subscription
+  const hasActiveSubscription = () => {
+    return user?.subscription?.isActive || user?.subscription?.status === 'active';
+  };
+
   return (
     <Routes>
       {user ? (
         <>
-          <Route path="/" element={<Layout><ManagerView /></Layout>} />
-          <Route path="/analytics" element={<Layout><Analytics /></Layout>} />
-          <Route path="/kanban" element={<Layout><Kanban /></Layout>} />
-          <Route path="/contacts" element={<Layout><Contacts /></Layout>} />
-          <Route path="/tasks" element={<Layout><Tasks /></Layout>} />
-          <Route path="/notifications" element={<Layout><Notifications /></Layout>} />
-          <Route path="/calendar" element={<Layout><Calendar /></Layout>} />
-          <Route path="/import-export" element={<Layout><BulkImportExport /></Layout>} />
-          <Route path="/email" element={<Layout><EmailIntegration /></Layout>} />
-          <Route path="/reports" element={<Layout><Reports /></Layout>} />
+          {/* Routes that require active subscription */}
+          {hasActiveSubscription() ? (
+            <>
+              <Route path="/" element={<Layout><ManagerView /></Layout>} />
+              <Route path="/analytics" element={<Layout><Analytics /></Layout>} />
+              <Route path="/kanban" element={<Layout><Kanban /></Layout>} />
+              <Route path="/contacts" element={<Layout><Contacts /></Layout>} />
+              <Route path="/tasks" element={<Layout><Tasks /></Layout>} />
+              <Route path="/notifications" element={<Layout><Notifications /></Layout>} />
+              <Route path="/calendar" element={<Layout><Calendar /></Layout>} />
+              <Route path="/import-export" element={<Layout><BulkImportExport /></Layout>} />
+              <Route path="/email" element={<Layout><EmailIntegration /></Layout>} />
+              <Route path="/reports" element={<Layout><Reports /></Layout>} />
+            </>
+          ) : (
+            <Route path="*" element={<Navigate to="/subscriptions" replace />} />
+          )}
+          
+          {/* Routes accessible without subscription */}
           <Route path="/subscriptions" element={<Layout><Subscriptions /></Layout>} />
           <Route path="/settings" element={<Layout><Settings /></Layout>} />
           <Route path="/login" element={<Login />} />

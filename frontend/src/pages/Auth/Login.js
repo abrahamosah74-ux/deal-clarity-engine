@@ -35,7 +35,12 @@ const Login = () => {
       
       if (result.success) {
         toast.success(isLogin ? 'Welcome back!' : 'Account created successfully!');
-        navigate(from, { replace: true });
+        // For new signups, redirect to subscriptions page to complete payment
+        if (!isLogin) {
+          navigate('/subscriptions', { replace: true });
+        } else {
+          navigate(from, { replace: true });
+        }
       } else {
         toast.error(result.error);
       }

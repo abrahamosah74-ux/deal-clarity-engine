@@ -162,8 +162,27 @@ const Subscriptions = () => {
           </p>
         </div>
 
+        {/* New User Onboarding Message */}
+        {!currentSubscription || !currentSubscription.isActive && currentSubscription?.plan === 'free' && (
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg p-8 mb-8 text-white border-2 border-blue-400">
+            <div className="flex items-start gap-4">
+              <div className="text-4xl">🎉</div>
+              <div className="flex-1">
+                <h2 className="text-2xl font-bold mb-2">Welcome to Deal Clarity!</h2>
+                <p className="text-blue-100 mb-4">
+                  To unlock the full power of Deal Clarity and access all features, you need to activate a paid subscription. 
+                  Choose a plan below to get started and manage your deals like a pro!
+                </p>
+                <p className="text-sm text-blue-200">
+                  ✅ Full feature access | ✅ Unlimited deals | ✅ Priority support
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Current Status */}
-        {currentSubscription && (
+        {currentSubscription && currentSubscription.isActive && (
           <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-600 mb-8">
             <div className="flex items-center justify-between">
               <div>
