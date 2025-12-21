@@ -172,29 +172,6 @@ function Layout({ children, sidebarOpen, setSidebarOpen }) {
   );
 }
 
-// Protected Route Component
-function ProtectedRoute({ children }) {
-  const { user, loading } = useAuth();
-  const navigate = useNavigate();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 font-semibold">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Login />;
-  }
-
-  return <Layout>{children}</Layout>;
-}
-
 function AppRoutes({ sidebarOpen, setSidebarOpen }) {
   const { user, loading } = useAuth();
 
