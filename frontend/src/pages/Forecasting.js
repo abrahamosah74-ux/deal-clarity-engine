@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FiBarChart3, FiTrendingUp, FiTarget, FiAlertCircle } from 'react-icons/fi';
-import api from '../../services/api';
+import { FiBarChart2, FiTrendingUp, FiTarget, FiAlertCircle } from 'react-icons/fi';
+import api from '../services/api';
 import './Forecasting.css';
 
 const Forecasting = () => {
@@ -40,7 +40,7 @@ const Forecasting = () => {
       <div className="metrics-grid">
         <div className="metric-card">
           <div className="metric-icon primary">
-            <FiBarChart3 />
+            <FiBarChart2 />
           </div>
           <div className="metric-content">
             <p className="metric-label">Total Forecast</p>

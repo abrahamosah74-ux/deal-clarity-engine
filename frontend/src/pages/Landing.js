@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiArrowRight, FiCheckCircle, FiTrendingUp, FiUsers, FiZap, FiBarChart3 } from 'react-icons/fi';
+import { FiArrowRight, FiCheckCircle, FiTrendingUp, FiUsers, FiZap, FiBarChart2 } from 'react-icons/fi';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const Landing = () => {
       description: 'Collaborate seamlessly with your sales team. Real-time updates, shared pipelines, and team analytics.'
     },
     {
-      icon: FiBarChart3,
+      icon: FiBarChart2,
       title: 'Automation Engine',
       description: 'Automate repetitive tasks, auto-sync with your CRM, and trigger workflows based on deal progress.'
     },
@@ -48,7 +48,7 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg">
-              <FiBarChart3 size={24} />
+              <FiBarChart2 size={24} />
             </div>
             <span className="text-2xl font-bold">Deal Clarity</span>
           </div>
