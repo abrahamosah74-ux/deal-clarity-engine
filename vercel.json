@@ -28,8 +28,5 @@
         "Cache-Control": "public, max-age=0, must-revalidate"
       }
     }
-  ],
-  "env": {
-    "REACT_APP_VERSION": "@now"
-  }
+  ]
 }
