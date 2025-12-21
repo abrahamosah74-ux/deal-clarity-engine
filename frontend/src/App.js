@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { FiBarChart2, FiCalendar, FiSettings, FiLogOut, FiCreditCard, FiUsers, FiCheckSquare, FiTrendingUp, FiColumns, FiBell, FiUpload, FiMail, FiFileText, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiBarChart2, FiCalendar, FiSettings, FiLogOut, FiCreditCard, FiUsers, FiCheckSquare, FiTrendingUp, FiColumns, FiBell, FiUpload, FiMail, FiFileText, FiChevronLeft, FiChevronRight, FiMenu, FiX } from 'react-icons/fi';
 import { useAuth, AuthProvider } from './contexts/AuthContext';
 import ManagerView from './components/Dashboard/ManagerView';
 import Calendar from './pages/Calendar';
@@ -26,6 +26,7 @@ function Layout({ children, sidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate();
   const { logout, user } = useAuth();
   const { onNotification } = useNotifications(user?._id, user?.team);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white' : 'text-gray-400 hover:text-white';
 
@@ -34,10 +35,20 @@ function Layout({ children, sidebarOpen, setSidebarOpen }) {
     navigate('/login');
   };
 
+  const closeMobileMenu = () => setMobileMenuOpen(false);
+
   return (
     <div className="flex h-screen bg-gray-900">
-      {/* Sidebar */}
-      <nav className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-gradient-to-b from-slate-900 to-slate-800 shadow-2xl border-r border-slate-700 flex flex-col transition-all duration-300`}>
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          onClick={closeMobileMenu}
+        />
+      )}
+
+      {/* Sidebar - Desktop */}
+      <nav className={`hidden md:flex ${sidebarOpen ? 'w-64' : 'w-20'} bg-gradient-to-b from-slate-900 to-slate-800 shadow-2xl border-r border-slate-700 flex-col transition-all duration-300`}>
         {/* Brand */}
         <div className="px-6 py-6 border-b border-slate-700 flex items-center justify-between bg-gradient-to-r from-blue-600 to-indigo-600">
           {sidebarOpen && (
@@ -157,10 +168,132 @@ function Layout({ children, sidebarOpen, setSidebarOpen }) {
         </div>
       </nav>
       
+      {/* Mobile Sidebar - Drawer */}
+      {mobileMenuOpen && (
+        <nav className="fixed inset-0 w-64 bg-gradient-to-b from-slate-900 to-slate-800 shadow-2xl border-r border-slate-700 flex flex-col z-40 md:hidden">
+          {/* Brand */}
+          <div className="px-6 py-6 border-b border-slate-700 flex items-center justify-between bg-gradient-to-r from-blue-600 to-indigo-600">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white rounded-lg">
+                <FiBarChart2 size={24} className="text-blue-600" />
+              </div>
+              <span className="text-xl font-bold text-white">Deal Clarity</span>
+            </div>
+            <button 
+              onClick={closeMobileMenu}
+              className="p-1 hover:bg-blue-700 rounded transition-colors"
+            >
+              <FiX size={20} className="text-white" />
+            </button>
+          </div>
+          
+          {/* Menu */}
+          <ul className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            <li>
+              <Link to="/" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/')}`} onClick={closeMobileMenu}>
+                <FiBarChart2 size={20} className="flex-shrink-0" />
+                <span className="truncate">Dashboard</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/analytics" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/analytics')}`} onClick={closeMobileMenu}>
+                <FiTrendingUp size={20} className="flex-shrink-0" />
+                <span className="truncate">Analytics</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/kanban" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/kanban')}`} onClick={closeMobileMenu}>
+                <FiColumns size={20} className="flex-shrink-0" />
+                <span className="truncate">Pipeline</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/contacts" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/contacts')}`} onClick={closeMobileMenu}>
+                <FiUsers size={20} className="flex-shrink-0" />
+                <span className="truncate">Contacts</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/tasks" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/tasks')}`} onClick={closeMobileMenu}>
+                <FiCheckSquare size={20} className="flex-shrink-0" />
+                <span className="truncate">Tasks</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/notifications" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/notifications')}`} onClick={closeMobileMenu}>
+                <FiBell size={20} className="flex-shrink-0" />
+                <span className="truncate">Notifications</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/calendar" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/calendar')}`} onClick={closeMobileMenu}>
+                <FiCalendar size={20} className="flex-shrink-0" />
+                <span className="truncate">Calendar</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/import-export" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/import-export')}`} onClick={closeMobileMenu}>
+                <FiUpload size={20} className="flex-shrink-0" />
+                <span className="truncate">Import/Export</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/email" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/email')}`} onClick={closeMobileMenu}>
+                <FiMail size={20} className="flex-shrink-0" />
+                <span className="truncate">Email</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/reports" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/reports')}`} onClick={closeMobileMenu}>
+                <FiFileText size={20} className="flex-shrink-0" />
+                <span className="truncate">Reports</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/email-templates" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/email-templates')}`} onClick={closeMobileMenu}>
+                <FiMail size={20} className="flex-shrink-0" />
+                <span className="truncate">Email Templates</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/subscriptions" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/subscriptions')}`} onClick={closeMobileMenu}>
+                <FiCreditCard size={20} className="flex-shrink-0" />
+                <span className="truncate">Subscriptions</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/settings" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/settings')}`} onClick={closeMobileMenu}>
+                <FiSettings size={20} className="flex-shrink-0" />
+                <span className="truncate">Settings</span>
+              </Link>
+            </li>
+          </ul>
+          
+          {/* Logout */}
+          <div className="px-4 py-6 border-t border-slate-700">
+            <button 
+              onClick={handleLogout}
+              className="w-full px-4 py-3 bg-gradient-to-r from-red-600 to-rose-600 text-white rounded-lg font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            >
+              <FiLogOut size={20} className="flex-shrink-0" />
+              <span className="truncate">Logout</span>
+            </button>
+          </div>
+        </nav>
+      )}
+      
       {/* Main Content */}
       <div className="flex-1 overflow-auto flex flex-col">
-        {/* Header with Notification Bell */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-end shadow-sm">
+        {/* Header with Mobile Menu and Notification Bell */}
+        <div className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between shadow-sm">
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            title="Menu"
+          >
+            <FiMenu size={24} className="text-gray-700" />
+          </button>
+          <div className="hidden md:block" />
           <NotificationCenter userId={user?._id} teamId={user?.team} />
         </div>
         {/* Page Content */}
