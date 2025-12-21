@@ -1,4 +1,4 @@
-import api from './api';
+import { api } from './api';
 
 const PAYSTACK_PUBLIC_KEY = process.env.REACT_APP_PAYSTACK_PUBLIC_KEY;
 const MONTHLY_PLAN = process.env.REACT_APP_PAYSTACK_MONTHLY_PLAN;

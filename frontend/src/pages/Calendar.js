@@ -11,7 +11,7 @@ import {
   FiPlus,
   FiRefreshCw
 } from 'react-icons/fi';
-import api from '../services/api';
+import { api } from '../services/api';
 
 // Helper function to format time
 const formatTime = (dateString) => {

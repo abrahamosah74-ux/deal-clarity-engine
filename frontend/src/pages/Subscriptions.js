@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { FiCheck, FiX, FiCreditCard, FiArrowRight } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 import paystackService from '../services/paystack';
-import api from '../services/api';
+import { api } from '../services/api';
 
 const Subscriptions = () => {
   const { user, subscription } = useAuth();

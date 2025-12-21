@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { FiSend, FiEdit2, FiCheck, FiAlertCircle } from 'react-icons/fi';
-import api from '../../services/api';
+import { api } from '../../services/api';
 import './FollowUpPreview.css';
 
 const FollowUpPreview = ({ commitmentData, onBack }) => {
