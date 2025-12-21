@@ -42,7 +42,8 @@ export default function ResetPassword() {
         newPassword
       });
 
-      if (response.data.success) {
+      // Note: API interceptor returns response.data directly
+      if (response.success) {
         setSubmitted(true);
         toast.success('Password reset successfully!');
 
@@ -50,11 +51,13 @@ export default function ResetPassword() {
         setTimeout(() => {
           navigate('/login');
         }, 2000);
+      } else {
+        toast.error(response.error || 'Failed to reset password. Please try again.');
       }
     } catch (error) {
       console.error('Reset password error:', error);
-      const errorMessage = error.response?.data?.error || 'Failed to reset password. Please try again.';
-      toast.error(errorMessage);
+      const errorMsg = error.response?.data?.error || error.message || 'Failed to reset password. Please try again.';
+      toast.error(errorMsg);
     } finally {
       setIsLoading(false);
     }

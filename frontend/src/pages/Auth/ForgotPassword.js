@@ -16,7 +16,8 @@ export default function ForgotPassword() {
     try {
       const response = await api.post('/auth/forgot-password', { email });
       
-      if (response.data.success) {
+      // Note: API interceptor returns response.data directly
+      if (response.success || response.status === 200) {
         setSubmitted(true);
         toast.success('Reset code sent! Check your email or spam folder.');
         
@@ -24,10 +25,13 @@ export default function ForgotPassword() {
         setTimeout(() => {
           navigate('/reset-password', { state: { email } });
         }, 2000);
+      } else {
+        toast.error(response.error || 'Failed to send reset code. Please try again.');
       }
     } catch (error) {
       console.error('Forgot password error:', error);
-      toast.error(error.response?.data?.error || 'Failed to send reset code. Please try again.');
+      const errorMsg = error.response?.data?.error || error.message || 'Failed to send reset code. Please try again.';
+      toast.error(errorMsg);
     } finally {
       setIsLoading(false);
     }
