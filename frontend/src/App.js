@@ -21,12 +21,11 @@ import NotificationCenter from './components/Notifications/NotificationCenter';
 import { useNotifications } from './hooks/useNotifications';
 import './App.css';
 
-function Layout({ children }) {
+function Layout({ children, sidebarOpen, setSidebarOpen }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout, user } = useAuth();
   const { onNotification } = useNotifications(user?._id, user?.team);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const isActive = (path) => location.pathname === path ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white' : 'text-gray-400 hover:text-white';
 
@@ -196,7 +195,7 @@ function ProtectedRoute({ children }) {
   return <Layout>{children}</Layout>;
 }
 
-function AppRoutes() {
+function AppRoutes({ sidebarOpen, setSidebarOpen }) {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -222,25 +221,25 @@ function AppRoutes() {
           {/* Routes that require active subscription */}
           {hasActiveSubscription() ? (
             <>
-              <Route path="/" element={<Layout><ManagerView /></Layout>} />
-              <Route path="/analytics" element={<Layout><Analytics /></Layout>} />
-              <Route path="/kanban" element={<Layout><Kanban /></Layout>} />
-              <Route path="/contacts" element={<Layout><Contacts /></Layout>} />
-              <Route path="/tasks" element={<Layout><Tasks /></Layout>} />
-              <Route path="/notifications" element={<Layout><Notifications /></Layout>} />
-              <Route path="/calendar" element={<Layout><Calendar /></Layout>} />
-              <Route path="/import-export" element={<Layout><BulkImportExport /></Layout>} />
-              <Route path="/email" element={<Layout><EmailIntegration /></Layout>} />
-              <Route path="/email-templates" element={<Layout><EmailTemplates /></Layout>} />
-              <Route path="/reports" element={<Layout><Reports /></Layout>} />
+              <Route path="/" element={<ManagerView />} />
+              <Route path="/analytics" element={<Analytics />} />
+              <Route path="/kanban" element={<Kanban />} />
+              <Route path="/contacts" element={<Contacts />} />
+              <Route path="/tasks" element={<Tasks />} />
+              <Route path="/notifications" element={<Notifications />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/import-export" element={<BulkImportExport />} />
+              <Route path="/email" element={<EmailIntegration />} />
+              <Route path="/email-templates" element={<EmailTemplates />} />
+              <Route path="/reports" element={<Reports />} />
             </>
           ) : (
             <Route path="*" element={<Navigate to="/subscriptions" replace />} />
           )}
           
           {/* Routes accessible without subscription */}
-          <Route path="/subscriptions" element={<Layout><Subscriptions /></Layout>} />
-          <Route path="/settings" element={<Layout><Settings /></Layout>} />
+          <Route path="/subscriptions" element={<Subscriptions />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="/login" element={<Login />} />
         </>
       ) : (
@@ -255,12 +254,28 @@ function AppRoutes() {
 }
 
 function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRoutes />
+        <AppContainer sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       </AuthProvider>
     </BrowserRouter>
+  );
+}
+
+function AppContainer({ sidebarOpen, setSidebarOpen }) {
+  const { user } = useAuth();
+
+  if (!user) {
+    return <AppRoutes sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />;
+  }
+
+  return (
+    <Layout sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}>
+      <AppRoutes sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+    </Layout>
   );
 }
 
