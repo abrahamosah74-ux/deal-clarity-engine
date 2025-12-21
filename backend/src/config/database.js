@@ -45,12 +45,12 @@ const connectDB = async () => {
       logger.warn('Mongoose disconnected from DB');
     });
 
-    // Graceful shutdown
-    process.on('SIGINT', async () => {
-      await mongoose.connection.close();
-      logger.info('Mongoose connection closed due to app termination');
-      process.exit(0);
-    });
+    // Graceful shutdown - commented out to prevent auto-exit
+    // process.on('SIGINT', async () => {
+    //   await mongoose.connection.close();
+    //   logger.info('Mongoose connection closed due to app termination');
+    //   process.exit(0);
+    // });
 
   } catch (error) {
     logger.error(`❌ MongoDB connection error: ${error.message}`);
