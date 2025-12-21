@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { FiMove, FiEdit2, FiTrash2, FiEye, FiPlus } from 'react-icons/fi';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import './Kanban.css';
 
 // Fallback Kanban without dnd-kit if not installed
