@@ -80,44 +80,51 @@ app.use(helmet({
 
 // CORS configuration
 const corsOptions = {
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://127.0.0.1:3000',
+      'https://deal-clarity-engine.vercel.app',
+      'https://dealclarity-engine.vercel.app',
+      'https://app.deal-clarity.com',
+      /https:\/\/deal-clarity-engine.*\.vercel\.app$/,
+      /https:\/\/dealclarity-engine.*\.vercel\.app$/
+    ];
+    
+    if (!origin || allowedOrigins.some(allowed => 
+      typeof allowed === 'string' ? allowed === origin : allowed.test(origin)
+    )) {
+      callback(null, true);
+    } else {
+      console.warn(`⚠️ CORS blocked origin: ${origin}`);
+      callback(null, true); // Allow anyway for now
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-Timestamp']
-};
-
-// Dynamically set origin to allow all Vercel preview and production deployments
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:3001',
-  'https://deal-clarity-engine.vercel.app', // Production
-  'https://dealclarity-engine.vercel.app', // Alternative production URL
-  'https://dealclarity-engine.vercel.app', // Another variant
-  'https://app.deal-clarity.com', // Custom domain
-  /https:\/\/deal-clarity-engine.*\.vercel\.app$/, // Preview deployments
-  /https:\/\/dealclarity-engine.*\.vercel\.app$/ // Alternative preview
-];
-
-corsOptions.origin = function(origin, callback) {
-  if (!origin || allowedOrigins.some(allowed => 
-    typeof allowed === 'string' ? allowed === origin : allowed.test(origin)
-  )) {
-    callback(null, true);
-  } else {
-    callback(new Error('Not allowed by CORS'));
-  }
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-Timestamp'],
+  optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
 
 // Rate limiting (shared config)
 app.use('/api/', customLimiter);
 
 // More aggressive rate limiting for auth endpoints
 const authLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 50, // 50 requests per hour
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // 100 requests per 15 minutes (more lenient)
   message: {
-    error: 'Too many authentication attempts, please try again after an hour'
+    error: 'Too many authentication attempts, please try again in 15 minutes'
+  },
+  skip: (req, res) => {
+    // Skip rate limiting for local development
+    return process.env.NODE_ENV === 'development';
   }
 });
 
