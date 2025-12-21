@@ -284,11 +284,11 @@ export default function ResetPassword() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isLoading || !email || !resetCode || !newPassword || !confirmPassword}
+              disabled={isLoading || !resetCode || !newPassword || !confirmPassword}
               style={{
                 width: '100%',
                 padding: '12px',
-                background: isLoading || !email || !resetCode || !newPassword || !confirmPassword 
+                background: isLoading || !resetCode || !newPassword || !confirmPassword 
                   ? '#ccc' 
                   : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 color: 'white',
@@ -296,7 +296,7 @@ export default function ResetPassword() {
                 borderRadius: '8px',
                 fontSize: '14px',
                 fontWeight: '600',
-                cursor: isLoading || !email || !resetCode || !newPassword || !confirmPassword
+                cursor: isLoading || !resetCode || !newPassword || !confirmPassword
                   ? 'not-allowed'
                   : 'pointer',
                 transition: 'all 0.3s ease',
