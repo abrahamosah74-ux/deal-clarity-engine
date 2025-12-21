@@ -35,6 +35,15 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authAPI.login({ email, password });
       
+      // If email verification is required
+      if (response.requiresVerification) {
+        return {
+          success: false,
+          requiresVerification: true,
+          error: response.error || 'Email not verified'
+        };
+      }
+      
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
       localStorage.setItem('userName', response.user.name);
@@ -45,7 +54,19 @@ export const AuthProvider = ({ children }) => {
       
       return { success: true };
     } catch (error) {
-      return { success: false, error: error.response?.data?.error || 'Login failed' };
+      const errorResponse = error.response?.data;
+      
+      // Handle verification required error
+      if (error.response?.status === 403 && errorResponse?.requiresVerification) {
+        return {
+          success: false,
+          requiresVerification: true,
+          error: errorResponse.error || 'Email not verified',
+          email: errorResponse.email
+        };
+      }
+      
+      return { success: false, error: errorResponse?.error || 'Login failed' };
     }
   };
 
@@ -53,6 +74,16 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authAPI.register(userData);
       
+      // If email verification is required
+      if (response.requiresVerification) {
+        return {
+          success: false,
+          requiresVerification: true,
+          error: response.message || 'Please verify your email',
+          email: response.email
+        };
+      }
+      
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
       localStorage.setItem('userName', response.user.name);
@@ -63,7 +94,18 @@ export const AuthProvider = ({ children }) => {
       
       return { success: true };
     } catch (error) {
-      return { success: false, error: error.response?.data?.error || 'Registration failed' };
+      const errorResponse = error.response?.data;
+      
+      // Handle verification required error
+      if (errorResponse?.requiresVerification) {
+        return {
+          success: false,
+          requiresVerification: true,
+          error: errorResponse.message || 'Please verify your email'
+        };
+      }
+      
+      return { success: false, error: errorResponse?.error || 'Registration failed' };
     }
   };
 

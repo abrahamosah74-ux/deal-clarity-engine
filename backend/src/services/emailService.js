@@ -1,0 +1,109 @@
+// backend/src/services/emailService.js
+const nodemailer = require('nodemailer');
+
+// Create transporter
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER || 'noreply@dealclarity.com',
+    pass: process.env.EMAIL_PASSWORD || ''
+  }
+});
+
+// Send verification email
+const sendVerificationEmail = async (email, name, verificationCode) => {
+  try {
+    // Log the verification code to console for testing
+    console.log('\n' + '='.repeat(70));
+    console.log('📧 VERIFICATION EMAIL');
+    console.log('='.repeat(70));
+    console.log(`📬 To: ${email}`);
+    console.log(`👤 Name: ${name}`);
+    console.log(`🔐 VERIFICATION CODE: ${verificationCode}`);
+    console.log(`⏰ Valid for: 24 hours`);
+    console.log('='.repeat(70));
+    console.log('💡 TIP: Copy and paste the verification code above into the app\n');
+    
+    const mailOptions = {
+      from: process.env.EMAIL_USER || 'noreply@dealclarity.com',
+      to: email,
+      subject: 'Email Verification - Deal Clarity',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+            <h1 style="color: white; margin: 0;">Deal Clarity</h1>
+          </div>
+          <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+            <h2 style="color: #333; margin-top: 0;">Welcome, ${name}!</h2>
+            <p style="color: #666; font-size: 16px;">Thank you for signing up for Deal Clarity. To get started, please verify your email address using the code below:</p>
+            
+            <div style="background: white; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: center; border: 2px solid #3b82f6;">
+              <p style="margin: 0; color: #999; font-size: 12px;">VERIFICATION CODE</p>
+              <p style="margin: 10px 0 0 0; font-size: 32px; font-weight: bold; color: #3b82f6; letter-spacing: 3px;">${verificationCode}</p>
+            </div>
+            
+            <p style="color: #666; font-size: 14px;">This code will expire in 24 hours.</p>
+            
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #999; font-size: 12px;">
+              <p>If you didn't create this account, please ignore this email.</p>
+              <p style="margin-bottom: 0;">© 2025 Deal Clarity. All rights reserved.</p>
+            </div>
+          </div>
+        </div>
+      `
+    };
+
+    // Try to send email, but continue if it fails (for development/testing)
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log('✅ Email sent successfully\n');
+    } catch (emailError) {
+      console.log('⚠️  Email service unavailable (check EMAIL_USER and EMAIL_PASSWORD env vars)');
+      console.log('✅ BUT: Verification code is ready to use above!\n');
+    }
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Critical error in sendVerificationEmail:', error);
+    return { success: true }; // Still return success so user can verify
+  }
+};
+
+// Send welcome email (after verification)
+const sendWelcomeEmail = async (email, name) => {
+  try {
+    const mailOptions = {
+      from: process.env.EMAIL_USER || 'noreply@dealclarity.com',
+      to: email,
+      subject: 'Welcome to Deal Clarity!',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+            <h1 style="color: white; margin: 0;">Deal Clarity</h1>
+          </div>
+          <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+            <h2 style="color: #333; margin-top: 0;">Welcome to Deal Clarity, ${name}!</h2>
+            <p style="color: #666; font-size: 16px;">Your email has been verified successfully. You can now log in and start managing your deals.</p>
+            
+            <a href="${process.env.FRONTEND_URL || 'https://dealclarity.vercel.app'}/login" style="display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 30px 0; font-weight: bold;">Go to Dashboard</a>
+            
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #999; font-size: 12px;">
+              <p>© 2025 Deal Clarity. All rights reserved.</p>
+            </div>
+          </div>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    return { success: true };
+  } catch (error) {
+    console.error('Email sending error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+module.exports = {
+  sendVerificationEmail,
+  sendWelcomeEmail
+};

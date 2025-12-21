@@ -13,10 +13,19 @@ const getApiUrl = () => {
     return 'http://localhost:5000/api';
   }
   // Production - must hardcode the Render API URL
+  // app.deal-clarity.com points to Render backend
   return 'https://deal-clarity-engine.onrender.com/api';
 };
 
 const API_URL = getApiUrl();
+
+// Log API configuration for debugging
+console.log('🔗 API Configuration:', {
+  hostname: window.location.hostname,
+  environment: process.env.NODE_ENV,
+  apiUrl: API_URL,
+  timestamp: new Date().toISOString()
+});
 
 // Create axios instance
 const api = axios.create({
