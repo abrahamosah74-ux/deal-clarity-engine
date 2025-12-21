@@ -282,10 +282,28 @@ const Login = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <FiLock className="inline mr-2" />
-                  Password
-                </label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <label className="block text-sm font-medium text-gray-700">
+                    <FiLock className="inline mr-2" />
+                    Password
+                  </label>
+                  {isLogin && (
+                    <Link 
+                      to="/forgot-password"
+                      style={{
+                        fontSize: '12px',
+                        color: '#667eea',
+                        textDecoration: 'none',
+                        fontWeight: '500',
+                        transition: 'color 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => e.target.style.color = '#764ba2'}
+                      onMouseLeave={(e) => e.target.style.color = '#667eea'}
+                    >
+                      Forgot?
+                    </Link>
+                  )}
+                </div>
                 <input
                   type="password"
                   name="password"

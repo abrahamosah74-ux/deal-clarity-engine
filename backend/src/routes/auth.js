@@ -3,7 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../models/User');
-const { sendVerificationEmail, sendWelcomeEmail } = require('../services/emailService');
+const { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail } = require('../services/emailService');
 
 // Register
 router.post('/register', async (req, res) => {
@@ -254,6 +254,96 @@ router.get('/me', async (req, res) => {
   } catch (error) {
     console.error('Auth error:', error);
     res.status(401).json({ error: 'Invalid token' });
+  }
+});
+
+// Forgot password - request reset code
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      // Don't reveal if user exists (security best practice)
+      return res.json({ 
+        success: true, 
+        message: 'If an account exists with this email, a reset code has been sent' 
+      });
+    }
+
+    // Generate password reset code (6 characters)
+    const resetCode = crypto.randomBytes(3).toString('hex').toUpperCase();
+    const resetExpiry = new Date(Date.now() + 1 * 60 * 60 * 1000); // 1 hour
+
+    // Save reset code to user
+    user.passwordResetCode = resetCode;
+    user.passwordResetExpiry = resetExpiry;
+    await user.save();
+
+    // Send reset email
+    await sendPasswordResetEmail(email, user.name, resetCode);
+
+    res.json({ 
+      success: true, 
+      message: 'If an account exists with this email, a reset code has been sent' 
+    });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({ error: 'Failed to process forgot password request' });
+  }
+});
+
+// Reset password - verify code and set new password
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { email, resetCode, newPassword } = req.body;
+
+    // Validate input
+    if (!email || !resetCode || !newPassword) {
+      return res.status(400).json({ error: 'Email, reset code, and new password are required' });
+    }
+
+    // Validate password strength
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    }
+
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Verify reset code
+    if (!user.passwordResetCode || user.passwordResetCode !== resetCode) {
+      return res.status(400).json({ error: 'Invalid reset code' });
+    }
+
+    // Check if code has expired
+    if (new Date() > user.passwordResetExpiry) {
+      return res.status(400).json({ error: 'Reset code has expired. Please request a new one' });
+    }
+
+    // Update password
+    user.password = newPassword;
+    user.passwordResetCode = null;
+    user.passwordResetExpiry = null;
+    await user.save();
+
+    console.log(`\n✅ PASSWORD RESET SUCCESSFUL for ${email}\n`);
+
+    res.json({ 
+      success: true, 
+      message: 'Password has been reset successfully. Please login with your new password.' 
+    });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({ error: 'Failed to reset password' });
   }
 });
 

@@ -23,6 +23,8 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  passwordResetCode: String,
+  passwordResetExpiry: Date,
   company: String,
   role: {
     type: String,

@@ -17,6 +17,8 @@ import EmailTemplates from './pages/EmailTemplates';
 import Reports from './pages/Reports';
 import Landing from './pages/Landing';
 import Login from './pages/Auth/Login';
+import ForgotPassword from './pages/Auth/ForgotPassword';
+import ResetPassword from './pages/Auth/ResetPassword';
 import NotificationCenter from './components/Notifications/NotificationCenter';
 import { useNotifications } from './hooks/useNotifications';
 import './App.css';
@@ -351,11 +353,15 @@ function AppRoutes({ sidebarOpen, setSidebarOpen }) {
           <Route path="/subscriptions" element={<Subscriptions />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </>
       ) : (
         <>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="*" element={<Landing />} />
         </>
       )}
