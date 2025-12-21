@@ -368,7 +368,7 @@ const Login = () => {
           <div className="text-center mt-6">
             <p className="text-gray-600">
               Forgot your password?{' '}
-              <Link to="/reset-password" className="text-blue-600 hover:text-blue-800 font-medium">
+              <Link to="/forgot-password" className="text-blue-600 hover:text-blue-800 font-medium">
                 Reset it here
               </Link>
             </p>
