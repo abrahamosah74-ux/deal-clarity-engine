@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { FiBarChart2, FiCalendar, FiSettings, FiLogOut, FiCreditCard, FiUsers, FiCheckSquare, FiTrendingUp, FiColumns, FiBell, FiUpload, FiMail, FiFileText } from 'react-icons/fi';
+import { FiBarChart2, FiCalendar, FiSettings, FiLogOut, FiCreditCard, FiUsers, FiCheckSquare, FiTrendingUp, FiColumns, FiBell, FiUpload, FiMail, FiFileText, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { useAuth, AuthProvider } from './contexts/AuthContext';
 import ManagerView from './components/Dashboard/ManagerView';
 import Calendar from './pages/Calendar';
@@ -26,6 +26,7 @@ function Layout({ children }) {
   const navigate = useNavigate();
   const { logout, user } = useAuth();
   const { onNotification } = useNotifications(user?._id, user?.team);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const isActive = (path) => location.pathname === path ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white' : 'text-gray-400 hover:text-white';
 
@@ -37,93 +38,109 @@ function Layout({ children }) {
   return (
     <div className="flex h-screen bg-gray-900">
       {/* Sidebar */}
-      <nav className="w-64 bg-gradient-to-b from-slate-900 to-slate-800 shadow-2xl border-r border-slate-700 flex flex-col">
+      <nav className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-gradient-to-b from-slate-900 to-slate-800 shadow-2xl border-r border-slate-700 flex flex-col transition-all duration-300`}>
         {/* Brand */}
-        <div className="px-6 py-6 border-b border-slate-700 flex items-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600">
-          <div className="p-2 bg-white rounded-lg">
-            <FiBarChart2 size={24} className="text-blue-600" />
-          </div>
-          <span className="text-xl font-bold text-white">Deal Clarity</span>
+        <div className="px-6 py-6 border-b border-slate-700 flex items-center justify-between bg-gradient-to-r from-blue-600 to-indigo-600">
+          {sidebarOpen && (
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white rounded-lg">
+                <FiBarChart2 size={24} className="text-blue-600" />
+              </div>
+              <span className="text-xl font-bold text-white">Deal Clarity</span>
+            </div>
+          )}
+          {!sidebarOpen && (
+            <div className="p-2 bg-white rounded-lg">
+              <FiBarChart2 size={24} className="text-blue-600" />
+            </div>
+          )}
+          <button 
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-1 hover:bg-blue-700 rounded transition-colors"
+            title={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+          >
+            {sidebarOpen ? <FiChevronLeft size={20} className="text-white" /> : <FiChevronRight size={20} className="text-white" />}
+          </button>
         </div>
         
         {/* Menu */}
         <ul className="flex-1 px-4 py-6 space-y-2">
           <li>
-            <Link to="/" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/')}`}>
-              <FiBarChart2 size={20} />
-              Dashboard
+            <Link to="/" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/')}`} title="Dashboard">
+              <FiBarChart2 size={20} className="flex-shrink-0" />
+              {sidebarOpen && <span className="truncate">Dashboard</span>}
             </Link>
           </li>
           <li>
-            <Link to="/analytics" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/analytics')}`}>
-              <FiTrendingUp size={20} />
-              Analytics
+            <Link to="/analytics" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/analytics')}`} title="Analytics">
+              <FiTrendingUp size={20} className="flex-shrink-0" />
+              {sidebarOpen && <span className="truncate">Analytics</span>}
             </Link>
           </li>
           <li>
-            <Link to="/kanban" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/kanban')}`}>
-              <FiColumns size={20} />
-              Pipeline
+            <Link to="/kanban" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/kanban')}`} title="Pipeline">
+              <FiColumns size={20} className="flex-shrink-0" />
+              {sidebarOpen && <span className="truncate">Pipeline</span>}
             </Link>
           </li>
           <li>
-            <Link to="/contacts" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/contacts')}`}>
-              <FiUsers size={20} />
-              Contacts
+            <Link to="/contacts" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/contacts')}`} title="Contacts">
+              <FiUsers size={20} className="flex-shrink-0" />
+              {sidebarOpen && <span className="truncate">Contacts</span>}
             </Link>
           </li>
           <li>
-            <Link to="/tasks" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/tasks')}`}>
-              <FiCheckSquare size={20} />
-              Tasks
+            <Link to="/tasks" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/tasks')}`} title="Tasks">
+              <FiCheckSquare size={20} className="flex-shrink-0" />
+              {sidebarOpen && <span className="truncate">Tasks</span>}
             </Link>
           </li>
           <li>
-            <Link to="/notifications" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/notifications')}`}>
-              <FiBell size={20} />
-              Notifications
+            <Link to="/notifications" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/notifications')}`} title="Notifications">
+              <FiBell size={20} className="flex-shrink-0" />
+              {sidebarOpen && <span className="truncate">Notifications</span>}
             </Link>
           </li>
           <li>
-            <Link to="/calendar" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/calendar')}`}>
-              <FiCalendar size={20} />
-              Calendar
+            <Link to="/calendar" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/calendar')}`} title="Calendar">
+              <FiCalendar size={20} className="flex-shrink-0" />
+              {sidebarOpen && <span className="truncate">Calendar</span>}
             </Link>
           </li>
           <li>
-            <Link to="/import-export" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/import-export')}`}>
-              <FiUpload size={20} />
-              Import/Export
+            <Link to="/import-export" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/import-export')}`} title="Import/Export">
+              <FiUpload size={20} className="flex-shrink-0" />
+              {sidebarOpen && <span className="truncate">Import/Export</span>}
             </Link>
           </li>
           <li>
-            <Link to="/email" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/email')}`}>
-              <FiMail size={20} />
-              Email
+            <Link to="/email" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/email')}`} title="Email">
+              <FiMail size={20} className="flex-shrink-0" />
+              {sidebarOpen && <span className="truncate">Email</span>}
             </Link>
           </li>
           <li>
-            <Link to="/reports" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/reports')}`}>
-              <FiFileText size={20} />
-              Reports
+            <Link to="/reports" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/reports')}`} title="Reports">
+              <FiFileText size={20} className="flex-shrink-0" />
+              {sidebarOpen && <span className="truncate">Reports</span>}
             </Link>
           </li>
           <li>
-            <Link to="/email-templates" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/email-templates')}`}>
-              <FiMail size={20} />
-              Email Templates
+            <Link to="/email-templates" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/email-templates')}`} title="Email Templates">
+              <FiMail size={20} className="flex-shrink-0" />
+              {sidebarOpen && <span className="truncate">Email Templates</span>}
             </Link>
           </li>
           <li>
-            <Link to="/subscriptions" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/subscriptions')}`}>
-              <FiCreditCard size={20} />
-              Subscriptions
+            <Link to="/subscriptions" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/subscriptions')}`} title="Subscriptions">
+              <FiCreditCard size={20} className="flex-shrink-0" />
+              {sidebarOpen && <span className="truncate">Subscriptions</span>}
             </Link>
           </li>
           <li>
-            <Link to="/settings" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/settings')}`}>
-              <FiSettings size={20} />
-              Settings
+            <Link to="/settings" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/settings')}`} title="Settings">
+              <FiSettings size={20} className="flex-shrink-0" />
+              {sidebarOpen && <span className="truncate">Settings</span>}
             </Link>
           </li>
         </ul>
@@ -133,9 +150,10 @@ function Layout({ children }) {
           <button 
             onClick={handleLogout}
             className="w-full px-4 py-3 bg-gradient-to-r from-red-600 to-rose-600 text-white rounded-lg font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            title="Logout"
           >
-            <FiLogOut size={20} />
-            Logout
+            <FiLogOut size={20} className="flex-shrink-0" />
+            {sidebarOpen && <span className="truncate">Logout</span>}
           </button>
         </div>
       </nav>
