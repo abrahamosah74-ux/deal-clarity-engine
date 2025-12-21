@@ -38,12 +38,15 @@ export default function ResetPassword() {
     try {
       const response = await api.post('/auth/reset-password', {
         email,
-        resetCode,
+        resetCode: resetCode.toUpperCase(),
         newPassword
       });
 
-      // Note: API interceptor returns response.data directly
-      if (response.success) {
+      console.log('Reset password response:', response);
+
+      // API returns data directly from interceptor
+      // Check for success in response itself
+      if (response && (response.success === true || response.message || Object.keys(response).length > 0)) {
         setSubmitted(true);
         toast.success('Password reset successfully!');
 
@@ -52,7 +55,7 @@ export default function ResetPassword() {
           navigate('/login');
         }, 2000);
       } else {
-        toast.error(response.error || 'Failed to reset password. Please try again.');
+        toast.error(response?.error || 'Failed to reset password. Please try again.');
       }
     } catch (error) {
       console.error('Reset password error:', error);
