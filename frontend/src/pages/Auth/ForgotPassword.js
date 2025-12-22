@@ -38,6 +38,9 @@ export default function ForgotPassword() {
         url: error.config?.url,
         baseURL: error.config?.baseURL,
         data: error.response?.data,
+        headers: error.config?.headers,
+        method: error.config?.method,
+        timeout: error.config?.timeout
       });
       const errorMsg = error.response?.data?.error || error.message || 'Failed to send reset code. Please try again.';
       toast.error(errorMsg);

@@ -120,6 +120,7 @@ const corsOptions = {
       'https://deal-clarity-engine.vercel.app',
       'https://dealclarity-engine.vercel.app',
       'https://app.deal-clarity.com',
+      'https://deal-clarity-engine.onrender.com',
       /https:\/\/deal-clarity-engine.*\.vercel\.app$/,
       /https:\/\/dealclarity-engine.*\.vercel\.app$/
     ];
@@ -297,10 +298,11 @@ process.on('SIGTERM', () => {
 });
 
 const PORT = process.env.PORT || 5000;
+const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : '127.0.0.1';
 const listenPromise = new Promise((resolve, reject) => {
-  console.log('⏳ Calling server.listen() on 0.0.0.0:5000...');
-  server.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Backend running on port ${PORT}`);
+  console.log(`⏳ Calling server.listen() on ${HOST}:${PORT}...`);
+  server.listen(PORT, HOST, () => {
+    console.log(`🚀 Backend running on http://${HOST}:${PORT}`);
     console.log(`📁 Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
     console.log(`🔌 WebSocket ready for real-time notifications`);
@@ -326,5 +328,14 @@ server.on('error', (err) => {
     process.exit(1);
   } else {
     console.error(err.stack);
+    process.exit(1);
   }
+});
+
+// Also wait for the listenPromise to resolve
+listenPromise.then(() => {
+  console.log('✓ listenPromise resolved - server is ready');
+}).catch((err) => {
+  console.error('❌ listenPromise rejected:', err);
+  process.exit(1);
 });

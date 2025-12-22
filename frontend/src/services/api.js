@@ -83,7 +83,13 @@ api.interceptors.response.use(
       baseURL: config?.baseURL,
       data: response?.data,
       message: message,
-      fullError: error
+      fullError: error,
+      request: {
+        method: config?.method,
+        headers: config?.headers,
+        data: config?.data,
+        timeout: config?.timeout
+      }
     });
     
     console.warn('🔍 API Configuration:', {
