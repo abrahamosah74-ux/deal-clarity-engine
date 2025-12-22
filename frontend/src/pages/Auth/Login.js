@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { FiMail, FiLock, FiUser, FiBriefcase, FiArrowLeft } from 'react-icons/fi';
 import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -76,37 +77,30 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'}/api/auth/verify-email`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: verificationEmail,
-          verificationCode: verificationCode.toUpperCase()
-        })
+      const response = await api.post('/auth/verify-email', {
+        email: verificationEmail,
+        verificationCode: verificationCode.toUpperCase()
       });
 
-      const data = await response.json();
-
-      if (response.ok && data.success) {
+      if (response.data.success) {
         toast.success('Email verified successfully!');
         setShowVerification(false);
         setVerificationCode('');
         
         // Auto login after verification
-        if (data.token) {
-          localStorage.setItem('token', data.token);
+        if (response.data.token) {
+          localStorage.setItem('token', response.data.token);
           navigate(from, { replace: true });
         } else {
           // If no token, go to login
           setIsLogin(true);
         }
       } else {
-        toast.error(data.error || 'Verification failed');
+        toast.error(response.data.error || 'Verification failed');
       }
     } catch (error) {
-      toast.error('Verification failed');
+      console.error('Verification error:', error);
+      toast.error(error.response?.data?.error || 'Verification failed');
     } finally {
       setLoading(false);
     }
@@ -116,29 +110,23 @@ const Login = () => {
     setLoading(true);
     try {
       console.log('📨 Attempting to resend verification code for:', verificationEmail);
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'}/api/auth/resend-verification`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: verificationEmail
-        })
+      const response = await api.post('/auth/resend-verification', {
+        email: verificationEmail
       });
 
-      const data = await response.json();
-      console.log('📬 Resend response:', data);
-      console.log('📊 Response status:', response.status, response.statusText);
+      console.log('📬 Resend response:', response.data);
+      console.log('📊 Response status:', response.status);
 
-      if (response.ok) {
+      if (response.data.success) {
         toast.success('Verification code sent to your email');
       } else {
-        console.error('❌ Resend error:', data.error);
-        toast.error(data.error || 'Failed to resend code');
+        console.error('❌ Resend error:', response.data.error);
+        toast.error(response.data.error || 'Failed to resend code');
       }
     } catch (error) {
       console.error('❌ Resend request failed:', error);
-      toast.error('Failed to resend code');
+      console.error('Error details:', error.response?.data || error.message);
+      toast.error(error.response?.data?.error || 'Failed to resend code');
     } finally {
       setLoading(false);
     }
