@@ -298,9 +298,14 @@ process.on('SIGTERM', () => {
 });
 
 const PORT = process.env.PORT || 5000;
-const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : '127.0.0.1';
+// Bind to 0.0.0.0 if on Render (check for RENDER env var) or if NODE_ENV is production
+const isProduction = process.env.NODE_ENV === 'production' || process.env.RENDER === 'true';
+const HOST = isProduction ? '0.0.0.0' : '127.0.0.1';
 const listenPromise = new Promise((resolve, reject) => {
   console.log(`⏳ Calling server.listen() on ${HOST}:${PORT}...`);
+  console.log(`   NODE_ENV: ${process.env.NODE_ENV}`);
+  console.log(`   RENDER: ${process.env.RENDER}`);
+  console.log(`   isProduction: ${isProduction}`);
   server.listen(PORT, HOST, () => {
     console.log(`🚀 Backend running on http://${HOST}:${PORT}`);
     console.log(`📁 Environment: ${process.env.NODE_ENV || 'development'}`);
