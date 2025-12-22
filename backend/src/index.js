@@ -297,18 +297,22 @@ process.on('SIGTERM', () => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = parseInt(process.env.PORT || '5000', 10);
 // Bind to 0.0.0.0 if on Render (check for RENDER env var) or if NODE_ENV is production
-const isProduction = process.env.NODE_ENV === 'production' || process.env.RENDER === 'true';
+// Also check for process.env.DYNO (Heroku) for compatibility
+const isProduction = process.env.NODE_ENV === 'production' || 
+                     process.env.RENDER === 'true' || 
+                     !!process.env.RENDER_INSTANCE_ID;
 const HOST = isProduction ? '0.0.0.0' : '127.0.0.1';
 const listenPromise = new Promise((resolve, reject) => {
   console.log(`⏳ Calling server.listen() on ${HOST}:${PORT}...`);
-  console.log(`   NODE_ENV: ${process.env.NODE_ENV}`);
-  console.log(`   RENDER: ${process.env.RENDER}`);
+  console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'undefined'}`);
+  console.log(`   RENDER: ${process.env.RENDER || 'undefined'}`);
+  console.log(`   RENDER_INSTANCE_ID: ${process.env.RENDER_INSTANCE_ID || 'undefined'}`);
   console.log(`   isProduction: ${isProduction}`);
   server.listen(PORT, HOST, () => {
     console.log(`🚀 Backend running on http://${HOST}:${PORT}`);
-    console.log(`📁 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`📁 Environment: ${isProduction ? 'production' : 'development'}`);
     console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
     console.log(`🔌 WebSocket ready for real-time notifications`);
     resolve();
