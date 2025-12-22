@@ -321,17 +321,17 @@ function AppRoutes({ sidebarOpen, setSidebarOpen }) {
     );
   }
 
-  // Helper function to check if user has active subscription
-  const hasActiveSubscription = () => {
-    return user?.subscription?.isActive || user?.subscription?.status === 'active';
+  // Helper function to check if user is logged in (allow free plan users)
+  const isLoggedIn = () => {
+    return user && user.emailVerified;
   };
 
   return (
     <Routes>
       {user ? (
         <>
-          {/* Routes that require active subscription */}
-          {hasActiveSubscription() ? (
+          {/* Routes accessible to all logged-in users (free and pro) */}
+          {isLoggedIn() ? (
             <>
               <Route path="/" element={<ManagerView />} />
               <Route path="/analytics" element={<Analytics />} />
