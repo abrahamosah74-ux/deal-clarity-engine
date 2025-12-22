@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
+const { checkFeatureAccess } = require('../middleware/featureAccess');
 const { google } = require('googleapis');
 const axios = require('axios');
 
 // Get calendar events
-router.get('/events', auth, async (req, res) => {
+router.get('/events', auth, checkFeatureAccess('calendar.enabled'), async (req, res) => {
   try {
     const { startDate, endDate, maxResults = 50 } = req.query;
     

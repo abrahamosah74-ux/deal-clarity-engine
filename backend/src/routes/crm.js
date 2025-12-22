@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
+const { checkFeatureAccess } = require('../middleware/featureAccess');
 const axios = require('axios');
 const User = require('../models/User');
 
 // Connect CRM
-router.post('/connect', auth, async (req, res) => {
+router.post('/connect', auth, checkFeatureAccess('integrations.crm'), async (req, res) => {
   try {
     const { provider, code, redirectUri } = req.body;
     

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
+const { checkFeatureAccess } = require('../middleware/featureAccess');
 const Deal = require('../models/Deal');
 const Contact = require('../models/Contact');
 const Task = require('../models/Task');
@@ -40,7 +41,7 @@ router.get('/pipeline', auth, async (req, res) => {
 });
 
 // Get sales velocity metrics
-router.get('/velocity', auth, async (req, res) => {
+router.get('/velocity', auth, checkFeatureAccess('analytics.advanced'), async (req, res) => {
   try {
     const { months = 6 } = req.query;
 

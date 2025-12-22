@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const Deal = require('../models/Deal');
 const auth = require('../middleware/auth');
+const { checkFeatureAccess } = require('../middleware/featureAccess');
 
 /**
  * Get pipeline forecast with weighted revenue
  * GET /api/forecasting/pipeline
  */
-router.get('/pipeline', auth, async (req, res) => {
+router.get('/pipeline', auth, checkFeatureAccess('analytics.forecasting'), async (req, res) => {
   try {
     const deals = await Deal.find({
       team: req.user.team,

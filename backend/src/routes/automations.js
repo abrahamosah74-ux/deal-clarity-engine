@@ -4,6 +4,7 @@ const router = express.Router();
 const Workflow = require('../models/Workflow');
 const Deal = require('../models/Deal');
 const auth = require('../middleware/auth');
+const { checkFeatureAccess } = require('../middleware/featureAccess');
 const AutomationEngine = require('../services/automationEngine');
 
 // Middleware to check team access
@@ -30,7 +31,7 @@ const checkTeamAccess = async (req, res, next) => {
 /**
  * Create a new workflow
  */
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, checkFeatureAccess('automations'), async (req, res) => {
   try {
     const { name, description, team, trigger, conditions, actions } = req.body;
 
