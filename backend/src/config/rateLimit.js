@@ -110,10 +110,40 @@ const apiKeyLimiter = rateLimit({
   }
 });
 
+// Email verification rate limiter (prevent brute force code guessing)
+const emailVerificationLimiter = rateLimit({
+  store,
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5, // 5 verification attempts per hour per email
+  keyGenerator: (req) => {
+    // Rate limit by email address
+    return req.body?.email || req.ip;
+  },
+  message: 'Too many verification attempts. Please try again in 1 hour.',
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+// Email resend rate limiter (prevent email flooding)
+const emailResendLimiter = rateLimit({
+  store,
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 3, // 3 resend attempts per 15 minutes per email
+  keyGenerator: (req) => {
+    // Rate limit by email address
+    return req.body?.email || req.ip;
+  },
+  message: 'Too many resend attempts. Please wait 15 minutes before trying again.',
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
 module.exports = globalLimiter;
 module.exports.globalLimiter = globalLimiter;
 module.exports.strictLimiter = strictLimiter;
 module.exports.authLimiter = authLimiter;
 module.exports.apiKeyLimiter = apiKeyLimiter;
+module.exports.emailVerificationLimiter = emailVerificationLimiter;
+module.exports.emailResendLimiter = emailResendLimiter;
 module.exports.redisClient = redisClient;
 module.exports.store = store;

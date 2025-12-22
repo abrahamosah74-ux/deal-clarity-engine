@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../models/User');
 const { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail } = require('../services/emailService');
+const { emailVerificationLimiter, emailResendLimiter } = require('../config/rateLimit');
 
 // Register
 router.post('/register', async (req, res) => {
@@ -70,7 +71,7 @@ router.post('/register', async (req, res) => {
 });
 
 // Verify email
-router.post('/verify-email', async (req, res) => {
+router.post('/verify-email', emailVerificationLimiter, async (req, res) => {
   try {
     const { email, verificationCode } = req.body;
 
@@ -134,7 +135,7 @@ router.post('/verify-email', async (req, res) => {
 });
 
 // Resend verification code
-router.post('/resend-verification', async (req, res) => {
+router.post('/resend-verification', emailResendLimiter, async (req, res) => {
   try {
     const { email } = req.body;
 
