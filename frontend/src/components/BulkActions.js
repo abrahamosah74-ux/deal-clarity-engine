@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FiCheckSquare, FiTrash2, FiEdit2, FiDownload, FiX } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
-import api from '../services/api';
+import { api } from '../services/api';
 import './BulkActions.css';
 
 const BulkActions = ({ selectedDealIds = [], onClear, deals = [], onRefresh }) => {

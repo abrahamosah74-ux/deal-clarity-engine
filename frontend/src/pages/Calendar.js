@@ -36,13 +36,13 @@ const CalendarView = () => {
       // Fetch real events from API
       const startDate = getStartDate().toISOString();
       const endDate = getEndDate().toISOString();
-      const response = await api.instance.get('/calendar/events', {
+      const response = await api.get('/calendar/events', {
         params: {
           startDate,
           endDate
         }
       });
-      setEvents(response.data || []);
+      setEvents(response || []);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching events:', error);

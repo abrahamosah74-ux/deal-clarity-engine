@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiBarChart2, FiTrendingUp, FiTarget, FiAlertCircle } from 'react-icons/fi';
-import api from '../services/api';
+import { api } from '../services/api';
 import './Forecasting.css';
 
 const Forecasting = () => {

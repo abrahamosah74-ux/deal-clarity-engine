@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiEdit2, FiTrash2, FiPlus, FiSearch, FiCopy, FiEye } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
-import api from '../services/api';
+import { api } from '../services/api';
 import './EmailTemplates.css';
 
 const EmailTemplates = () => {
