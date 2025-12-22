@@ -53,9 +53,15 @@ const sendVerificationEmail = async (email, name, verificationCode) => {
       `
     };
 
-    // Try to send email, but continue if it fails (for development/testing)
+    // Try to send email with a 5-second timeout, but continue if it fails (for development/testing)
     try {
-      await transporter.sendMail(mailOptions);
+      // Wrap sendMail in a timeout promise to prevent hanging
+      const emailPromise = transporter.sendMail(mailOptions);
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Email send timeout')), 5000)
+      );
+      
+      await Promise.race([emailPromise, timeoutPromise]);
       console.log('✅ Email sent successfully\n');
     } catch (emailError) {
       console.log('⚠️  Email service unavailable (check EMAIL_USER and EMAIL_PASSWORD env vars)');
@@ -98,8 +104,9 @@ const sendWelcomeEmail = async (email, name) => {
     await transporter.sendMail(mailOptions);
     return { success: true };
   } catch (error) {
-    console.error('Email sending error:', error);
-    return { success: false, error: error.message };
+    console.error('Welcome email error:', error);
+    // Don't block user from proceeding if welcome email fails
+    return { success: true };
   }
 };
 
@@ -145,9 +152,15 @@ const sendPasswordResetEmail = async (email, name, resetCode) => {
       `
     };
 
-    // Try to send email, but continue if it fails (for development/testing)
+    // Try to send email with a 5-second timeout, but continue if it fails (for development/testing)
     try {
-      await transporter.sendMail(mailOptions);
+      // Wrap sendMail in a timeout promise to prevent hanging
+      const emailPromise = transporter.sendMail(mailOptions);
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Email send timeout')), 5000)
+      );
+      
+      await Promise.race([emailPromise, timeoutPromise]);
       console.log('✅ Email sent successfully\n');
     } catch (emailError) {
       console.log('⚠️  Email service unavailable (check EMAIL_USER and EMAIL_PASSWORD env vars)');
