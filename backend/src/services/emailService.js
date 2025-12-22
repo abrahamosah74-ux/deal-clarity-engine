@@ -1,13 +1,20 @@
 // backend/src/services/emailService.js
 const { Resend } = require('resend');
 
-// Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize Resend with API key (or null for development)
+let resend = null;
+if (process.env.RESEND_API_KEY) {
+  resend = new Resend(process.env.RESEND_API_KEY);
+}
 
 // Log email configuration on startup
 console.log('\n🔧 Initializing Email Service:');
-console.log(`RESEND_API_KEY configured: ${process.env.RESEND_API_KEY ? '✅ SET' : '❌ NOT SET'}`);
-console.log('✅ Email service is ready! (Using Resend)\n');
+console.log(`RESEND_API_KEY configured: ${process.env.RESEND_API_KEY ? '✅ SET' : '❌ NOT SET (Will use console logging)'}`);
+if (resend) {
+  console.log('✅ Email service is ready! (Using Resend API)');
+} else {
+  console.log('⚠️  Email service running in development mode (emails logged to console)\n');
+}
 
 // Send verification email
 const sendVerificationEmail = async (email, name, verificationCode) => {
@@ -22,10 +29,14 @@ const sendVerificationEmail = async (email, name, verificationCode) => {
   console.log('='.repeat(70));
   console.log('💡 TIP: Copy and paste the verification code above into the app\n');
   
-  // Send email via Resend
+  // Send email via Resend if API key is available
+  if (!resend) {
+    console.log('⚠️  Resend API not configured. Email not sent (development mode).\n');
+    return { success: true };
+  }
+
   try {
     console.log('📨 Attempting to send verification email via Resend...');
-    console.log(`Using API key: ${process.env.RESEND_API_KEY ? '✅ SET' : '❌ NOT SET'}`);
     
     const data = await resend.emails.send({
       from: 'noreply@deal-clarity.com',
@@ -83,6 +94,11 @@ const sendWelcomeEmail = async (email, name) => {
     console.log('='.repeat(70));
     console.log('💡 Welcome email being sent to verified user\n');
 
+    if (!resend) {
+      console.log('⚠️  Resend API not configured. Welcome email not sent (development mode).\n');
+      return { success: true };
+    }
+
     const data = await resend.emails.send({
       from: 'noreply@deal-clarity.com',
       to: email,
@@ -134,10 +150,14 @@ const sendPasswordResetEmail = async (email, name, resetCode) => {
   console.log('='.repeat(70));
   console.log('💡 TIP: Copy and paste the reset code above into the app\n');
   
-  // Send email via Resend
+  // Send email via Resend if API key is available
+  if (!resend) {
+    console.log('⚠️  Resend API not configured. Password reset email not sent (development mode).\n');
+    return { success: true };
+  }
+
   try {
     console.log('📨 Attempting to send password reset email via Resend...');
-    console.log(`Using API key: ${process.env.RESEND_API_KEY ? '✅ SET' : '❌ NOT SET'}`);
     
     const data = await resend.emails.send({
       from: 'noreply@deal-clarity.com',
