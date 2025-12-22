@@ -1,12 +1,26 @@
 // backend/src/services/emailService.js
 const nodemailer = require('nodemailer');
 
+// Log email configuration on startup
+console.log('\n🔧 Initializing Email Service:');
+console.log(`EMAIL_USER: ${process.env.EMAIL_USER ? '✅ SET' : '❌ NOT SET'}`);
+console.log(`EMAIL_PASSWORD: ${process.env.EMAIL_PASSWORD ? `✅ SET (length: ${process.env.EMAIL_PASSWORD.length})` : '❌ NOT SET'}`);
+
 // Create transporter
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER || 'noreply@dealclarity.com',
     pass: process.env.EMAIL_PASSWORD || ''
+  }
+});
+
+// Test SMTP connection on startup
+transporter.verify((error, success) => {
+  if (error) {
+    console.log(`❌ Email transporter error: ${error.message}`);
+  } else {
+    console.log('✅ Email service is ready!\n');
   }
 });
 
@@ -56,6 +70,7 @@ const sendVerificationEmail = async (email, name, verificationCode) => {
     // Try to send email with a 5-second timeout, but continue if it fails (for development/testing)
     try {
       // Wrap sendMail in a timeout promise to prevent hanging
+      console.log('📨 Attempting to send verification email...');
       const emailPromise = transporter.sendMail(mailOptions);
       const timeoutPromise = new Promise((_, reject) => 
         setTimeout(() => reject(new Error('Email send timeout')), 5000)
@@ -66,7 +81,9 @@ const sendVerificationEmail = async (email, name, verificationCode) => {
     } catch (emailError) {
       console.log('⚠️  Email service unavailable');
       console.log(`Error: ${emailError.message}`);
+      if (emailError.code) console.log(`Error Code: ${emailError.code}`);
       if (emailError.response) console.log(`SMTP Response: ${emailError.response}`);
+      console.log('ℹ️  This may be due to incorrect Gmail credentials or Gmail blocking the connection');
       console.log('✅ BUT: Verification code is ready to use above!\n');
     }
     
