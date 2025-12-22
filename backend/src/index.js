@@ -13,6 +13,14 @@ const http = require('http');
 const socketIO = require('socket.io');
 console.log('✓ All requires loaded');
 
+// Log environment information early
+console.log('\n=== STARTUP DIAGNOSTICS ===');
+console.log(`NODE_ENV: ${process.env.NODE_ENV || 'undefined'}`);
+console.log(`PORT: ${process.env.PORT || '5000'}`);
+console.log(`RENDER: ${process.env.RENDER || 'undefined'}`);
+console.log(`RENDER_INSTANCE_ID: ${process.env.RENDER_INSTANCE_ID || 'undefined'}`);
+console.log(`========================\n`);
+
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 console.log('✓ Env loaded');
 
