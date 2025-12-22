@@ -114,14 +114,18 @@ const Login = () => {
         email: verificationEmail
       });
 
-      console.log('📬 Resend response:', response.data);
+      console.log('📬 Resend response:', response);
+      console.log('📬 Response data:', response.data);
       console.log('📊 Response status:', response.status);
 
-      if (response.data.success) {
+      if (response.data && response.data.success) {
+        toast.success('Verification code sent to your email');
+      } else if (response.status === 200) {
+        // Success even if no explicit success flag
         toast.success('Verification code sent to your email');
       } else {
-        console.error('❌ Resend error:', response.data.error);
-        toast.error(response.data.error || 'Failed to resend code');
+        console.error('❌ Resend error:', response.data?.error);
+        toast.error(response.data?.error || 'Failed to resend code');
       }
     } catch (error) {
       console.error('❌ Resend request failed:', error);
