@@ -1,28 +1,13 @@
 // backend/src/services/emailService.js
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
+
+// Initialize Resend with API key
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Log email configuration on startup
 console.log('\n🔧 Initializing Email Service:');
-console.log(`EMAIL_USER: ${process.env.EMAIL_USER ? '✅ SET' : '❌ NOT SET'}`);
-console.log(`EMAIL_PASSWORD: ${process.env.EMAIL_PASSWORD ? `✅ SET (length: ${process.env.EMAIL_PASSWORD.length})` : '❌ NOT SET'}`);
-
-// Create transporter
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER || 'noreply@dealclarity.com',
-    pass: process.env.EMAIL_PASSWORD || ''
-  }
-});
-
-// Test SMTP connection on startup
-transporter.verify((error, success) => {
-  if (error) {
-    console.log(`❌ Email transporter error: ${error.message}`);
-  } else {
-    console.log('✅ Email service is ready!\n');
-  }
-});
+console.log(`RESEND_API_KEY configured: ${process.env.RESEND_API_KEY ? '✅ SET' : '❌ NOT SET'}`);
+console.log('✅ Email service is ready! (Using Resend)\n');
 
 // Send verification email
 const sendVerificationEmail = async (email, name, verificationCode) => {
@@ -38,52 +23,46 @@ const sendVerificationEmail = async (email, name, verificationCode) => {
     console.log('='.repeat(70));
     console.log('💡 TIP: Copy and paste the verification code above into the app\n');
     
-    const mailOptions = {
-      from: process.env.EMAIL_USER || 'noreply@dealclarity.com',
-      to: email,
-      subject: 'Email Verification - Deal Clarity',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-            <h1 style="color: white; margin: 0;">Deal Clarity</h1>
-          </div>
-          <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
-            <h2 style="color: #333; margin-top: 0;">Welcome, ${name}!</h2>
-            <p style="color: #666; font-size: 16px;">Thank you for signing up for Deal Clarity. To get started, please verify your email address using the code below:</p>
-            
-            <div style="background: white; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: center; border: 2px solid #3b82f6;">
-              <p style="margin: 0; color: #999; font-size: 12px;">VERIFICATION CODE</p>
-              <p style="margin: 10px 0 0 0; font-size: 32px; font-weight: bold; color: #3b82f6; letter-spacing: 3px;">${verificationCode}</p>
-            </div>
-            
-            <p style="color: #666; font-size: 14px;">This code will expire in 24 hours.</p>
-            
-            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #999; font-size: 12px;">
-              <p>If you didn't create this account, please ignore this email.</p>
-              <p style="margin-bottom: 0;">© 2025 Deal Clarity. All rights reserved.</p>
-            </div>
-          </div>
-        </div>
-      `
-    };
-
-    // Try to send email with a 5-second timeout, but continue if it fails (for development/testing)
+    // Send email via Resend
     try {
-      // Wrap sendMail in a timeout promise to prevent hanging
-      console.log('📨 Attempting to send verification email...');
-      const emailPromise = transporter.sendMail(mailOptions);
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Email send timeout')), 5000)
-      );
+      console.log('📨 Attempting to send verification email via Resend...');
+      const data = await resend.emails.send({
+        from: 'noreply@deal-clarity.com',
+        to: email,
+        subject: 'Email Verification - Deal Clarity',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+              <h1 style="color: white; margin: 0;">Deal Clarity</h1>
+            </div>
+            <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+              <h2 style="color: #333; margin-top: 0;">Welcome, ${name}!</h2>
+              <p style="color: #666; font-size: 16px;">Thank you for signing up for Deal Clarity. To get started, please verify your email address using the code below:</p>
+              
+              <div style="background: white; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: center; border: 2px solid #3b82f6;">
+                <p style="margin: 0; color: #999; font-size: 12px;">VERIFICATION CODE</p>
+                <p style="margin: 10px 0 0 0; font-size: 32px; font-weight: bold; color: #3b82f6; letter-spacing: 3px;">${verificationCode}</p>
+              </div>
+              
+              <p style="color: #666; font-size: 14px;">This code will expire in 24 hours.</p>
+              
+              <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #999; font-size: 12px;">
+                <p>If you didn't create this account, please ignore this email.</p>
+                <p style="margin-bottom: 0;">© 2025 Deal Clarity. All rights reserved.</p>
+              </div>
+            </div>
+          </div>
+        `
+      });
       
-      await Promise.race([emailPromise, timeoutPromise]);
-      console.log('✅ Email sent successfully\n');
+      if (data.error) {
+        console.log(`⚠️  Resend API error: ${data.error.message}`);
+      } else {
+        console.log('✅ Email sent successfully via Resend!\n');
+      }
     } catch (emailError) {
-      console.log('⚠️  Email service unavailable');
+      console.log('⚠️  Email service error');
       console.log(`Error: ${emailError.message}`);
-      if (emailError.code) console.log(`Error Code: ${emailError.code}`);
-      if (emailError.response) console.log(`SMTP Response: ${emailError.response}`);
-      console.log('ℹ️  This may be due to incorrect Gmail credentials or Gmail blocking the connection');
       console.log('✅ BUT: Verification code is ready to use above!\n');
     }
     
@@ -143,48 +122,45 @@ const sendPasswordResetEmail = async (email, name, resetCode) => {
     console.log('='.repeat(70));
     console.log('💡 TIP: Copy and paste the reset code above into the app\n');
     
-    const mailOptions = {
-      from: process.env.EMAIL_USER || 'noreply@dealclarity.com',
-      to: email,
-      subject: 'Password Reset - Deal Clarity',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-            <h1 style="color: white; margin: 0;">Deal Clarity</h1>
-          </div>
-          <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
-            <h2 style="color: #333; margin-top: 0;">Reset Your Password</h2>
-            <p style="color: #666; font-size: 16px;">We received a request to reset your password. Use the code below to create a new password:</p>
-            
-            <div style="background: white; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: center; border: 2px solid #ef4444;">
-              <p style="margin: 0; color: #999; font-size: 12px;">RESET CODE</p>
-              <p style="margin: 10px 0 0 0; font-size: 32px; font-weight: bold; color: #ef4444; letter-spacing: 3px;">${resetCode}</p>
-            </div>
-            
-            <p style="color: #666; font-size: 14px;">This code will expire in 1 hour. If you didn't request this reset, you can safely ignore this email.</p>
-            
-            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #999; font-size: 12px;">
-              <p>© 2025 Deal Clarity. All rights reserved.</p>
-            </div>
-          </div>
-        </div>
-      `
-    };
-
-    // Try to send email with a 5-second timeout, but continue if it fails (for development/testing)
+    // Send email via Resend
     try {
-      // Wrap sendMail in a timeout promise to prevent hanging
-      const emailPromise = transporter.sendMail(mailOptions);
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Email send timeout')), 5000)
-      );
+      console.log('📨 Attempting to send password reset email via Resend...');
+      const data = await resend.emails.send({
+        from: 'noreply@deal-clarity.com',
+        to: email,
+        subject: 'Password Reset - Deal Clarity',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+              <h1 style="color: white; margin: 0;">Deal Clarity</h1>
+            </div>
+            <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+              <h2 style="color: #333; margin-top: 0;">Reset Your Password</h2>
+              <p style="color: #666; font-size: 16px;">We received a request to reset your password. Use the code below to create a new password:</p>
+              
+              <div style="background: white; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: center; border: 2px solid #ef4444;">
+                <p style="margin: 0; color: #999; font-size: 12px;">RESET CODE</p>
+                <p style="margin: 10px 0 0 0; font-size: 32px; font-weight: bold; color: #ef4444; letter-spacing: 3px;">${resetCode}</p>
+              </div>
+              
+              <p style="color: #666; font-size: 14px;">This code will expire in 1 hour. If you didn't request this reset, you can safely ignore this email.</p>
+              
+              <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #999; font-size: 12px;">
+                <p>© 2025 Deal Clarity. All rights reserved.</p>
+              </div>
+            </div>
+          </div>
+        `
+      });
       
-      await Promise.race([emailPromise, timeoutPromise]);
-      console.log('✅ Email sent successfully\n');
+      if (data.error) {
+        console.log(`⚠️  Resend API error: ${data.error.message}`);
+      } else {
+        console.log('✅ Email sent successfully via Resend!\n');
+      }
     } catch (emailError) {
-      console.log('⚠️  Email service unavailable');
+      console.log('⚠️  Email service error');
       console.log(`Error: ${emailError.message}`);
-      if (emailError.response) console.log(`SMTP Response: ${emailError.response}`);
       console.log('✅ BUT: Reset code is ready to use above!\n');
     }
     
