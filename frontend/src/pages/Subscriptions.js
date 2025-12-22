@@ -454,7 +454,7 @@ const Subscriptions = () => {
                 Need help choosing?
               </h3>
               <p className="text-gray-600">
-                Contact our support team at webmatrix90s@protonmail.com. We're happy to help you find the right plan.
+                Contact our support team at webmatrix@deal-clarity.com. We're happy to help you find the right plan.
               </p>
             </div>
           </div>
