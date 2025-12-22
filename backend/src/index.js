@@ -1,6 +1,6 @@
 const express = require('express');
 console.log('✓ Imported express');
-
+// Version: 1.0.1 - Password reset fixes
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
