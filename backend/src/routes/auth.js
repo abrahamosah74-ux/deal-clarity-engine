@@ -260,19 +260,6 @@ router.get('/me', async (req, res) => {
 // Forgot password - request reset code
 router.post('/forgot-password', async (req, res) => {
   try {
-    // TEMP DEBUG: Log incoming requests to help diagnose client connectivity/CORS issues
-    console.log('\n🔎 Incoming /forgot-password request');
-    console.log('  Time:', new Date().toISOString());
-    console.log('  IP:', req.ip || req.connection?.remoteAddress);
-    console.log('  Origin header:', req.get('origin'));
-    console.log('  Host header:', req.get('host'));
-    console.log('  Headers:', {
-      origin: req.get('origin'),
-      referer: req.get('referer'),
-      'user-agent': req.get('user-agent'),
-      'content-type': req.get('content-type')
-    });
-
     const { email } = req.body;
 
     if (!email) {

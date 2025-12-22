@@ -76,28 +76,15 @@ api.interceptors.response.use(
   (error) => {
     const { response, config, message } = error;
     
-    // Build a best-effort fully resolved URL for debugging when response is missing
-    const resolvedBase = config?.baseURL || response?.config?.baseURL || API_URL;
-    const resolvedPath = config?.url || response?.config?.url || '';
-    const fullUrl = `${resolvedBase.replace(/\/$/, '')}${resolvedPath.startsWith('/') ? '' : '/'}${resolvedPath}`;
-
     console.error('❌ API Error:', {
       status: response?.status,
       statusText: response?.statusText,
       url: config?.url || response?.config?.url,
-      fullUrl,
-      baseURL: resolvedBase,
+      baseURL: config?.baseURL,
       data: response?.data,
       message: message,
       fullError: error,
-      // When response is undefined, axios still exposes `request` which contains low-level info
-      request: error?.request,
-      requestSummary: error?.request ? {
-        _constructor: error.request.constructor && error.request.constructor.name,
-        _hasHeaders: !!error.request.headers,
-        _hasBody: !!error.request.body || !!config?.data
-      } : undefined,
-      requestConfig: {
+      request: {
         method: config?.method,
         headers: config?.headers,
         data: config?.data,
@@ -111,8 +98,7 @@ api.interceptors.response.use(
     });
     
     if (!response) {
-      // Provide a more detailed toast and keep the original rejection for existing code paths
-      toast.error('Network error. Please check your connection and that the API is running at: ' + fullUrl);
+      toast.error('Network error. Please check your connection and that the API is running at: ' + API_URL);
       return Promise.reject(new Error('Network error'));
     }
     
