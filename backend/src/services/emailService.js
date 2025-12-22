@@ -64,7 +64,9 @@ const sendVerificationEmail = async (email, name, verificationCode) => {
       await Promise.race([emailPromise, timeoutPromise]);
       console.log('✅ Email sent successfully\n');
     } catch (emailError) {
-      console.log('⚠️  Email service unavailable (check EMAIL_USER and EMAIL_PASSWORD env vars)');
+      console.log('⚠️  Email service unavailable');
+      console.log(`Error: ${emailError.message}`);
+      if (emailError.response) console.log(`SMTP Response: ${emailError.response}`);
       console.log('✅ BUT: Verification code is ready to use above!\n');
     }
     
@@ -163,7 +165,9 @@ const sendPasswordResetEmail = async (email, name, resetCode) => {
       await Promise.race([emailPromise, timeoutPromise]);
       console.log('✅ Email sent successfully\n');
     } catch (emailError) {
-      console.log('⚠️  Email service unavailable (check EMAIL_USER and EMAIL_PASSWORD env vars)');
+      console.log('⚠️  Email service unavailable');
+      console.log(`Error: ${emailError.message}`);
+      if (emailError.response) console.log(`SMTP Response: ${emailError.response}`);
       console.log('✅ BUT: Reset code is ready to use above!\n');
     }
     
