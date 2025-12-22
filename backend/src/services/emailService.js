@@ -27,7 +27,7 @@ const sendVerificationEmail = async (email, name, verificationCode) => {
     try {
       console.log('📨 Attempting to send verification email via Resend...');
       const data = await resend.emails.send({
-        from: 'noreply@deal-clarity.com',
+        from: 'onboarding@resend.dev',
         to: email,
         subject: 'Email Verification - Deal Clarity',
         html: `
@@ -126,7 +126,7 @@ const sendPasswordResetEmail = async (email, name, resetCode) => {
     try {
       console.log('📨 Attempting to send password reset email via Resend...');
       const data = await resend.emails.send({
-        from: 'noreply@deal-clarity.com',
+        from: 'onboarding@resend.dev',
         to: email,
         subject: 'Password Reset - Deal Clarity',
         html: `
