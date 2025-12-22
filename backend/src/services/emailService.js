@@ -28,7 +28,7 @@ const sendVerificationEmail = async (email, name, verificationCode) => {
     console.log(`Using API key: ${process.env.RESEND_API_KEY ? '✅ SET' : '❌ NOT SET'}`);
     
     const data = await resend.emails.send({
-      from: 'onboarding@resend.dev',
+      from: 'noreply@deal-clarity.com',
       to: email,
       subject: 'Email Verification - Deal Clarity',
       html: `
@@ -126,7 +126,7 @@ const sendPasswordResetEmail = async (email, name, resetCode) => {
     console.log(`Using API key: ${process.env.RESEND_API_KEY ? '✅ SET' : '❌ NOT SET'}`);
     
     const data = await resend.emails.send({
-      from: 'onboarding@resend.dev',
+      from: 'noreply@deal-clarity.com',
       to: email,
       subject: 'Password Reset - Deal Clarity',
       html: `
