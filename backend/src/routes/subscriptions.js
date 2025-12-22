@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const Paystack = require('paystack')(process.env.PAYSTACK_SECRET_KEY);
 const auth = require('../middleware/auth');
+const { getUserFeatures } = require('../middleware/featureAccess');
 const User = require('../models/User');
 
 // Initialize Paystack transaction
@@ -104,5 +105,8 @@ router.post('/cancel', auth, async (req, res) => {
     res.status(500).json({ error: 'Failed to cancel subscription' });
   }
 });
+
+// Get user's available features
+router.get('/features', auth, getUserFeatures);
 
 module.exports = router;

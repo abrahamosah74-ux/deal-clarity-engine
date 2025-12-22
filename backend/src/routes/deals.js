@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
+const { checkDealLimit, checkFeatureAccess } = require('../middleware/featureAccess');
 const Deal = require('../models/Deal');
 const Contact = require('../models/Contact');
 const Task = require('../models/Task');
@@ -27,7 +28,7 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Create deal
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, checkDealLimit, async (req, res) => {
   try {
     const { name, amount, stage, probability, contact, clarityScore } = req.body;
 

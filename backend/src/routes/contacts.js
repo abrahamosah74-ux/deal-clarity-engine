@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
+const { checkContactLimit } = require('../middleware/featureAccess');
 const Contact = require('../models/Contact');
 
 // Create contact
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, checkContactLimit, async (req, res) => {
   try {
     const { firstName, lastName, email, phone, mobile, company, jobTitle, department, leadScore } = req.body;
 

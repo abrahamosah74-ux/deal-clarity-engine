@@ -194,7 +194,8 @@ export const subscriptionAPI = {
   verifyPayment: (reference, plan) => api.get(`/subscriptions/verify/${reference}?plan=${plan}`),
   getStatus: () => api.get('/subscriptions/status'),
   cancel: () => api.post('/subscriptions/cancel'),
-  updatePlan: (plan) => api.post('/subscriptions/update-plan', { plan })
+  updatePlan: (plan) => api.post('/subscriptions/update-plan', { plan }),
+  getFeatures: () => api.get('/subscriptions/features')
 };
 
 // Manager API methods
