@@ -22,6 +22,18 @@ console.log(`RENDER_INSTANCE_ID: ${process.env.RENDER_INSTANCE_ID || 'undefined'
 console.log(`========================\n`);
 
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
+
+// Log email configuration status
+console.log('\n=== EMAIL CONFIGURATION ===');
+const hasEmailUser = !!process.env.EMAIL_USER;
+const hasEmailPass = !!process.env.EMAIL_PASSWORD;
+console.log(`EMAIL_USER configured: ${hasEmailUser ? '✅ YES' : '❌ NO'}`);
+console.log(`EMAIL_PASSWORD configured: ${hasEmailPass ? '✅ YES' : '❌ NO'}`);
+if (hasEmailUser) {
+  const user = process.env.EMAIL_USER;
+  console.log(`EMAIL_USER: ${user.substring(0, 3)}***@${user.split('@')[1] || 'unknown'}`);
+}
+console.log(`========================\n`);
 console.log('✓ Env loaded');
 
 const { connectDB } = require('./config/database');
