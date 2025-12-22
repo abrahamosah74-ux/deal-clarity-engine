@@ -159,6 +159,7 @@ router.post('/resend-verification', async (req, res) => {
     user.emailVerificationExpiry = verificationExpiry;
     await user.save();
 
+    console.log(`📨 Resending verification code to: ${email}`);
     // Send verification email
     await sendVerificationEmail(email, user.name, verificationCode);
 
@@ -167,7 +168,7 @@ router.post('/resend-verification', async (req, res) => {
       message: 'Verification code sent to your email'
     });
   } catch (error) {
-    console.error('Resend verification error:', error);
+    console.error('❌ Resend verification error:', error);
     res.status(500).json({ error: 'Failed to resend verification code' });
   }
 });
