@@ -1,4 +1,6 @@
 const express = require('express');
+console.log('✓ Imported express');
+
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -9,10 +11,14 @@ const morgan = require('morgan');
 const path = require('path');
 const http = require('http');
 const socketIO = require('socket.io');
+console.log('✓ All requires loaded');
+
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
+console.log('✓ Env loaded');
 
 const { connectDB } = require('./config/database');
 const SocketManager = require('./services/socketManager');
+console.log('✓ Dependencies loaded');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -36,9 +42,14 @@ const reportsRoutes = require('./routes/reports');
 const teamsRoutes = require('./routes/teams');
 const automationsRoutes = require('./routes/automations');
 const notificationsRoutes = require('./routes/notifications');
+console.log('✓ All routes imported');
 
 const app = express();
+console.log('✓ Express app created');
+
 const server = http.createServer(app);
+console.log('✓ HTTP server created');
+
 const io = socketIO(server, {
   cors: {
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
@@ -47,10 +58,12 @@ const io = socketIO(server, {
   },
   transports: ['websocket', 'polling']
 });
+console.log('✓ Socket.io initialized');
 
 // Initialize Socket Manager
 const socketManager = new SocketManager(io);
 socketManager.initializeHandlers();
+console.log('✓ SocketManager initialized');
 
 // Add global error handlers
 process.on('uncaughtException', (err) => {
@@ -64,19 +77,25 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error(reason.stack);
   }
 });
+console.log('✓ Error handlers registered');
 
 // Make socketManager available to routes
 app.use((req, res, next) => {
   req.socketManager = socketManager;
   next();
 });
+console.log('✓ SocketManager middleware added');
 
 // Connect to database
+console.log('⏳ Connecting to database...');
 connectDB().catch(err => {
   console.error('Failed to connect to database:', err);
 });
+console.log('✓ connectDB() called');
+
 
 // Security middleware
+console.log('⏳ Setting up middleware...');
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -152,8 +171,10 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Static files (for uploads)
 app.use('/uploads', express.static('uploads'));
+console.log('✓ Middleware configured');
 
 // Routes
+console.log('⏳ Registering routes...');
 app.use('/api/auth', authRoutes);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/commitments', commitmentRoutes);
@@ -175,8 +196,10 @@ app.use('/api/reports', reportsRoutes);
 app.use('/api/teams', teamsRoutes);
 app.use('/api/automations', automationsRoutes);
 app.use('/api/notifications', notificationsRoutes);
+console.log('✓ All routes registered');
 
 // Welcome route
+console.log('⏳ Setting up welcome route...');
 app.get('/', (req, res) => {
   res.json({
     message: 'Welcome to Deal Clarity Engine API',
@@ -253,8 +276,10 @@ app.use((err, req, res, next) => {
     message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
   });
 });
+console.log('✓ Error handlers configured');
 
 // Graceful shutdown
+console.log('⏳ Setting up server listen...');
 process.on('SIGTERM', () => {
   console.log('SIGTERM signal received: closing HTTP server');
   server.close(() => {
@@ -267,16 +292,34 @@ process.on('SIGTERM', () => {
 });
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Backend running on port ${PORT}`);
-  console.log(`📁 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
-  console.log(`🔌 WebSocket ready for real-time notifications`);
+const listenPromise = new Promise((resolve, reject) => {
+  console.log('⏳ Calling server.listen() on 127.0.0.1:5000...');
+  server.listen(PORT, '127.0.0.1', () => {
+    console.log(`🚀 Backend running on port ${PORT}`);
+    console.log(`📁 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
+    console.log(`🔌 WebSocket ready for real-time notifications`);
+    resolve();
+  });
+});
+console.log('✓ server.listen() called, waiting for listening event...');
+
+server.on('listening', () => {
+  console.log(`✓ Server is now listening on port ${PORT}`);
+  console.log('✓ Backend is fully operational and ready for requests');
+  console.log('-------------------------------------------');
+  setInterval(() => {
+    // Keep process alive
+  }, 60000);
 });
 
 server.on('error', (err) => {
-  console.error('❌ Server error:', err.message);
+  console.error('❌ Server socket error:', err.message);
+  console.error('Code:', err.code);
   if (err.code === 'EADDRINUSE') {
     console.error(`Port ${PORT} is already in use`);
+    process.exit(1);
+  } else {
+    console.error(err.stack);
   }
 });

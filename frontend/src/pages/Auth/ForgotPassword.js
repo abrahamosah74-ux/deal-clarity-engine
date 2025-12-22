@@ -32,6 +32,13 @@ export default function ForgotPassword() {
       }
     } catch (error) {
       console.error('Forgot password error:', error);
+      console.error('Error details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        url: error.config?.url,
+        baseURL: error.config?.baseURL,
+        data: error.response?.data,
+      });
       const errorMsg = error.response?.data?.error || error.message || 'Failed to send reset code. Please try again.';
       toast.error(errorMsg);
     } finally {

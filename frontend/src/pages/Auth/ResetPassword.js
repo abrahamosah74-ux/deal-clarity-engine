@@ -59,6 +59,13 @@ export default function ResetPassword() {
       }
     } catch (error) {
       console.error('Reset password error:', error);
+      console.error('Error details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        url: error.config?.url,
+        baseURL: error.config?.baseURL,
+        data: error.response?.data,
+      });
       const errorMsg = error.response?.data?.error || error.message || 'Failed to reset password. Please try again.';
       toast.error(errorMsg);
     } finally {
