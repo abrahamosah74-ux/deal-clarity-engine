@@ -75,8 +75,16 @@ const sendVerificationEmail = async (email, name, verificationCode) => {
 // Send welcome email (after verification)
 const sendWelcomeEmail = async (email, name) => {
   try {
-    const mailOptions = {
-      from: process.env.EMAIL_USER || 'noreply@dealclarity.com',
+    console.log('\n' + '='.repeat(70));
+    console.log('🎉 WELCOME EMAIL');
+    console.log('='.repeat(70));
+    console.log(`📬 To: ${email}`);
+    console.log(`👤 Name: ${name}`);
+    console.log('='.repeat(70));
+    console.log('💡 Welcome email being sent to verified user\n');
+
+    const data = await resend.emails.send({
+      from: 'noreply@deal-clarity.com',
       to: email,
       subject: 'Welcome to Deal Clarity!',
       html: `
@@ -88,7 +96,7 @@ const sendWelcomeEmail = async (email, name) => {
             <h2 style="color: #333; margin-top: 0;">Welcome to Deal Clarity, ${name}!</h2>
             <p style="color: #666; font-size: 16px;">Your email has been verified successfully. You can now log in and start managing your deals.</p>
             
-            <a href="${process.env.FRONTEND_URL || 'https://dealclarity.vercel.app'}/login" style="display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 30px 0; font-weight: bold;">Go to Dashboard</a>
+            <a href="${process.env.FRONTEND_URL || 'https://app.deal-clarity.com'}/login" style="display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 30px 0; font-weight: bold;">Go to Dashboard</a>
             
             <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #999; font-size: 12px;">
               <p>© 2025 Deal Clarity. All rights reserved.</p>
@@ -96,12 +104,18 @@ const sendWelcomeEmail = async (email, name) => {
           </div>
         </div>
       `
-    };
+    });
 
-    await transporter.sendMail(mailOptions);
-    return { success: true };
+    if (data.error) {
+      console.error(`❌ Welcome email error: ${JSON.stringify(data.error)}`);
+      // Don't block user from proceeding if welcome email fails
+      return { success: true };
+    } else {
+      console.log(`✅ Welcome email sent successfully! Message ID: ${data.id}\n`);
+      return { success: true };
+    }
   } catch (error) {
-    console.error('Welcome email error:', error);
+    console.error('❌ Welcome email error:', error.message);
     // Don't block user from proceeding if welcome email fails
     return { success: true };
   }
