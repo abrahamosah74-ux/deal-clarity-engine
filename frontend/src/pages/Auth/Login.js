@@ -114,23 +114,26 @@ const Login = () => {
         email: verificationEmail
       });
 
-      console.log('📬 Resend response:', response);
+      console.log('📬 Full resend response:', response);
       console.log('📬 Response data:', response.data);
       console.log('📊 Response status:', response.status);
 
-      if (response.data && response.data.success) {
+      if (response?.data?.success) {
+        console.log('✅ Success response received');
         toast.success('Verification code sent to your email');
-      } else if (response.status === 200) {
+      } else if (response?.status === 200) {
         // Success even if no explicit success flag
+        console.log('✅ 200 status received, treating as success');
         toast.success('Verification code sent to your email');
       } else {
-        console.error('❌ Resend error:', response.data?.error);
-        toast.error(response.data?.error || 'Failed to resend code');
+        console.error('❌ Unexpected response structure:', response.data);
+        toast.error(response?.data?.error || 'Failed to resend code');
       }
     } catch (error) {
-      console.error('❌ Resend request failed:', error);
-      console.error('Error details:', error.response?.data || error.message);
-      toast.error(error.response?.data?.error || 'Failed to resend code');
+      console.error('❌ Resend request failed:', error.message);
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      toast.error(error.response?.data?.error || error.message || 'Failed to resend code');
     } finally {
       setLoading(false);
     }
