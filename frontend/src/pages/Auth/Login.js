@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { FiMail, FiLock, FiUser, FiBriefcase, FiArrowLeft } from 'react-icons/fi';
 import { useAuth } from '../../contexts/AuthContext';
-import api from '../../services/api';
+import { api } from '../../services/api';
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
