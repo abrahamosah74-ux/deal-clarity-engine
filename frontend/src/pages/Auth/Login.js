@@ -115,6 +115,7 @@ const Login = () => {
   const handleResendCode = async () => {
     setLoading(true);
     try {
+      console.log('📨 Attempting to resend verification code for:', verificationEmail);
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'}/api/auth/resend-verification`, {
         method: 'POST',
         headers: {
@@ -126,13 +127,17 @@ const Login = () => {
       });
 
       const data = await response.json();
+      console.log('📬 Resend response:', data);
+      console.log('📊 Response status:', response.status, response.statusText);
 
       if (response.ok) {
         toast.success('Verification code sent to your email');
       } else {
+        console.error('❌ Resend error:', data.error);
         toast.error(data.error || 'Failed to resend code');
       }
     } catch (error) {
+      console.error('❌ Resend request failed:', error);
       toast.error('Failed to resend code');
     } finally {
       setLoading(false);
