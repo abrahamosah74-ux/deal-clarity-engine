@@ -55,6 +55,10 @@ console.log('✓ All routes imported');
 const app = express();
 console.log('✓ Express app created');
 
+// Trust proxy headers from Render/load balancers (required for rate limiting and IP detection)
+app.set('trust proxy', 1);
+console.log('✓ Proxy trust configured');
+
 const server = http.createServer(app);
 console.log('✓ HTTP server created');
 
