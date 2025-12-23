@@ -361,20 +361,23 @@ const EmailTemplates = () => {
             <h2>Template Preview</h2>
             <div className="preview-controls">
               {Array.isArray(selectedTemplate.variables) && selectedTemplate.variables.length > 0 ? (
-                selectedTemplate.variables.map(v => (
-                  <div key={v?.name || Math.random()} className="preview-var">
-                    <label>{v?.description || v?.name || 'Variable'}</label>
-                    <input
-                      type="text"
-                      value={previewVars[v?.name] || ''}
-                      onChange={(e) => setPreviewVars({
-                        ...previewVars,
-                        [v?.name]: e.target.value
-                      })}
-                      placeholder={v?.example || ''}
-                    />
-                  </div>
-                ))
+                selectedTemplate.variables.map(v => {
+                  const varName = v?.name || '';
+                  return (
+                    <div key={varName || Math.random()} className="preview-var">
+                      <label>{v?.description || v?.name || 'Variable'}</label>
+                      <input
+                        type="text"
+                        value={previewVars[varName] || ''}
+                        onChange={(e) => setPreviewVars({
+                          ...previewVars,
+                          [varName]: e.target.value
+                        })}
+                        placeholder={v?.example || ''}
+                      />
+                    </div>
+                  );
+                })
               ) : (
                 <p className="empty-message">No variables in this template</p>
               )}
