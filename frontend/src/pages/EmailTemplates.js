@@ -31,7 +31,7 @@ const EmailTemplates = () => {
     if (user) {
       fetchTemplates();
     }
-  }, [user, filter];
+  }, [user, filter]);
 
   const fetchTemplates = async () => {
     try {
