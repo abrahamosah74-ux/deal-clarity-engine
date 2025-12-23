@@ -8,6 +8,10 @@ const getApiUrl = () => {
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     return 'http://localhost:5000/api';
   }
+  // If accessing via 172.* IP (local network), use local backend
+  if (window.location.hostname.startsWith('172.') || window.location.hostname.startsWith('192.')) {
+    return 'http://localhost:5000/api';
+  }
   // Development check (npm start)
   if (process.env.NODE_ENV === 'development') {
     return 'http://localhost:5000/api';
