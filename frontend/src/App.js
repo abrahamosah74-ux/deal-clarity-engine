@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { FiBarChart2, FiCalendar, FiSettings, FiLogOut, FiCreditCard, FiUsers, FiCheckSquare, FiTrendingUp, FiColumns, FiBell, FiUpload, FiMail, FiFileText, FiChevronLeft, FiChevronRight, FiMenu, FiX } from 'react-icons/fi';
 import { useAuth, AuthProvider } from './contexts/AuthContext';
@@ -30,14 +30,17 @@ function Layout({ children, sidebarOpen, setSidebarOpen }) {
   const { onNotification } = useNotifications(user?._id, user?.team);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const isActive = (path) => location.pathname === path ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white' : 'text-gray-400 hover:text-white';
+  // Memoize isActive function to prevent recreating on every render
+  const isActive = useCallback((path) => {
+    return location.pathname === path ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white' : 'text-gray-400 hover:text-white';
+  }, [location.pathname]);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logout();
     navigate('/login');
-  };
+  }, [logout, navigate]);
 
-  const closeMobileMenu = () => setMobileMenuOpen(false);
+  const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);
 
   return (
     <div className="flex h-screen bg-gray-900">
