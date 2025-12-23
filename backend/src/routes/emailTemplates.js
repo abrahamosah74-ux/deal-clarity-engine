@@ -12,7 +12,7 @@ router.post('/', auth, async (req, res) => {
 
     const template = new EmailTemplate({
       team: req.user.team,
-      createdBy: req.user.id,
+      createdBy: req.user._id,
       name,
       category,
       subject,
@@ -35,6 +35,8 @@ router.get('/', auth, async (req, res) => {
   try {
     const { category, isActive = true } = req.query;
 
+    console.log('Fetching templates for team:', req.user.team);
+
     let query = { team: req.user.team };
 
     if (category) {
@@ -45,14 +47,20 @@ router.get('/', auth, async (req, res) => {
       query.isActive = isActive === 'true';
     }
 
+    console.log('Query:', query);
+
     const templates = await EmailTemplate.find(query)
       .sort({ category: 1, createdAt: -1 })
       .populate('createdBy', 'name avatar');
 
+    console.log('Found templates:', templates.length);
+
     // Add default templates if none exist
     if (templates.length === 0) {
       try {
-        const defaultTemplates = await createDefaultTemplates(req.user.team, req.user.id);
+        console.log('Creating default templates...');
+        const defaultTemplates = await createDefaultTemplates(req.user.team, req.user._id);
+        console.log('Created default templates:', defaultTemplates.length);
         return res.json({ templates: defaultTemplates });
       } catch (defaultError) {
         console.error('Error creating default templates:', defaultError);
@@ -64,6 +72,7 @@ router.get('/', auth, async (req, res) => {
     res.json({ templates });
   } catch (error) {
     console.error('GET /email-templates error:', error);
+    console.error('Error details:', error.message, error.stack);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
