@@ -15,6 +15,7 @@ import BulkImportExport from './pages/BulkImportExport';
 import EmailIntegration from './pages/EmailIntegration';
 import EmailTemplates from './pages/EmailTemplates';
 import Reports from './pages/Reports';
+import UsageAnalytics from './pages/UsageAnalytics';
 import Landing from './pages/Landing';
 import Login from './pages/Auth/Login';
 import ForgotPassword from './pages/Auth/ForgotPassword';
@@ -141,6 +142,12 @@ function Layout({ children, sidebarOpen, setSidebarOpen }) {
             </Link>
           </li>
           <li>
+            <Link to="/usage-analytics" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/usage-analytics')}`} title="Usage Analytics">
+              <FiTrendingUp size={20} className="flex-shrink-0" />
+              {sidebarOpen && <span className="truncate">Usage Analytics</span>}
+            </Link>
+          </li>
+          <li>
             <Link to="/email-templates" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/email-templates')}`} title="Email Templates">
               <FiMail size={20} className="flex-shrink-0" />
               {sidebarOpen && <span className="truncate">Email Templates</span>}
@@ -255,6 +262,12 @@ function Layout({ children, sidebarOpen, setSidebarOpen }) {
               </Link>
             </li>
             <li>
+              <Link to="/usage-analytics" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/usage-analytics')}`} onClick={closeMobileMenu}>
+                <FiTrendingUp size={20} className="flex-shrink-0" />
+                <span className="truncate">Usage Analytics</span>
+              </Link>
+            </li>
+            <li>
               <Link to="/email-templates" className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${isActive('/email-templates')}`} onClick={closeMobileMenu}>
                 <FiMail size={20} className="flex-shrink-0" />
                 <span className="truncate">Email Templates</span>
@@ -347,6 +360,7 @@ function AppRoutes({ sidebarOpen, setSidebarOpen }) {
               <Route path="/email" element={<EmailIntegration />} />
               <Route path="/email-templates" element={<EmailTemplates />} />
               <Route path="/reports" element={<Reports />} />
+              <Route path="/usage-analytics" element={<UsageAnalytics />} />
             </>
           ) : (
             <Route path="*" element={<Navigate to="/subscriptions" replace />} />

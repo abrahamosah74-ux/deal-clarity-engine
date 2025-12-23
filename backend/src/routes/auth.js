@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const User = require('../models/User');
 const { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail } = require('../services/emailService');
 const { emailVerificationLimiter, emailResendLimiter } = require('../config/rateLimit');
+const TrackingService = require('../services/trackingService');
 
 // Register
 router.post('/register', async (req, res) => {
@@ -54,6 +55,18 @@ router.post('/register', async (req, res) => {
     });
     
     await user.save();
+
+    // Track signup event
+    await TrackingService.trackEvent({
+      userId: user._id,
+      eventType: 'signup',
+      metadata: {
+        email,
+        company
+      },
+      ipAddress: req.ip,
+      userAgent: req.get('user-agent')
+    });
 
     // Send verification email
     await sendVerificationEmail(email, name, verificationCode);
@@ -105,6 +118,14 @@ router.post('/verify-email', emailVerificationLimiter, async (req, res) => {
     user.emailVerificationCode = null;
     user.emailVerificationExpiry = null;
     await user.save();
+
+    // Track email verification event
+    await TrackingService.trackEvent({
+      userId: user._id,
+      eventType: 'email_verified',
+      ipAddress: req.ip,
+      userAgent: req.get('user-agent')
+    });
 
     // Send welcome email
     await sendWelcomeEmail(email, user.name);
@@ -208,6 +229,14 @@ router.post('/login', async (req, res) => {
     // Update last login
     user.lastLogin = new Date();
     await user.save();
+
+    // Track login event
+    await TrackingService.trackEvent({
+      userId: user._id,
+      eventType: 'login',
+      ipAddress: req.ip,
+      userAgent: req.get('user-agent')
+    });
     
     // Create token
     const token = jwt.sign(

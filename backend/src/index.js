@@ -62,6 +62,7 @@ const reportsRoutes = require('./routes/reports');
 const teamsRoutes = require('./routes/teams');
 const automationsRoutes = require('./routes/automations');
 const notificationsRoutes = require('./routes/notifications');
+const trackingRoutes = require('./routes/tracking');
 console.log('✓ All routes imported');
 
 const app = express();
@@ -221,6 +222,7 @@ app.use('/api/reports', reportsRoutes);
 app.use('/api/teams', teamsRoutes);
 app.use('/api/automations', automationsRoutes);
 app.use('/api/notifications', notificationsRoutes);
+app.use('/api/tracking', trackingRoutes);
 console.log('✓ All routes registered');
 
 // Welcome route
