@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { FiEdit2, FiTrash2, FiPlus, FiSearch, FiCopy, FiEye, FiDownload } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 import { api } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 import { emailTemplatePresets } from '../utils/emailTemplatePresets';
 import './EmailTemplates.css';
 
 const EmailTemplates = () => {
+  const { user } = useAuth();
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState('all');
@@ -24,19 +26,23 @@ const EmailTemplates = () => {
     tags: []
   });
 
+  // Fetch templates when user changes OR when filter changes
   useEffect(() => {
-    fetchTemplates();
-  }, [filter]);
+    if (user) {
+      fetchTemplates();
+    }
+  }, [user, filter];
 
   const fetchTemplates = async () => {
     try {
       setLoading(true);
       const params = filter !== 'all' ? { category: filter } : {};
       const response = await api.get('/email-templates', { params });
-      setTemplates(response.templates);
+      setTemplates(response.data?.templates || response.templates || []);
     } catch (error) {
+      console.error('Failed to load templates:', error);
       toast.error('Failed to load templates');
-      console.error(error);
+      setTemplates([]);
     } finally {
       setLoading(false);
     }
