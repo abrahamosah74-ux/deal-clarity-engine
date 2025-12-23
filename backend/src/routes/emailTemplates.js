@@ -51,12 +51,19 @@ router.get('/', auth, async (req, res) => {
 
     // Add default templates if none exist
     if (templates.length === 0) {
-      const defaultTemplates = await createDefaultTemplates(req.user.team, req.user.id);
-      return res.json({ templates: defaultTemplates });
+      try {
+        const defaultTemplates = await createDefaultTemplates(req.user.team, req.user.id);
+        return res.json({ templates: defaultTemplates });
+      } catch (defaultError) {
+        console.error('Error creating default templates:', defaultError);
+        // Return empty array instead of failing
+        return res.json({ templates: [] });
+      }
     }
 
     res.json({ templates });
   } catch (error) {
+    console.error('GET /email-templates error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
@@ -317,7 +324,20 @@ Best regards,
     }
   ];
 
-  return await EmailTemplate.insertMany(defaults);
+  try {
+    // Check if any templates already exist before inserting
+    const existingCount = await EmailTemplate.countDocuments({ team: teamId, isDefault: true });
+    if (existingCount > 0) {
+      // Return existing templates instead of creating duplicates
+      return await EmailTemplate.find({ team: teamId, isDefault: true });
+    }
+
+    return await EmailTemplate.insertMany(defaults);
+  } catch (error) {
+    console.error('Error in createDefaultTemplates:', error);
+    // Return any existing default templates instead of failing
+    return await EmailTemplate.find({ team: teamId, isDefault: true }).catch(() => []);
+  }
 }
 
 module.exports = router;

@@ -88,18 +88,25 @@ const EmailTemplates = () => {
     setSelectedTemplate(template);
     setShowPreview(true);
     const vars = {};
-    template.variables?.forEach(v => {
-      vars[v.name] = v.example || '';
-    });
+    if (Array.isArray(template.variables)) {
+      template.variables.forEach(v => {
+        if (v && v.name) {
+          vars[v.name] = v.example || '';
+        }
+      });
+    }
     setPreviewVars(vars);
   };
 
   const renderTemplate = (subject, body, variables) => {
-    let rendered = { subject, body };
+    let rendered = { subject: subject || '', body: body || '' };
+    if (!variables || typeof variables !== 'object') {
+      return rendered;
+    }
     Object.entries(variables).forEach(([key, value]) => {
       const regex = new RegExp(`{{${key}}}`, 'g');
-      rendered.subject = rendered.subject.replace(regex, value);
-      rendered.body = rendered.body.replace(regex, value);
+      rendered.subject = rendered.subject.replace(regex, String(value || ''));
+      rendered.body = rendered.body.replace(regex, String(value || ''));
     });
     return rendered;
   };
@@ -347,20 +354,24 @@ const EmailTemplates = () => {
           <div className="modal preview-modal" onClick={(e) => e.stopPropagation()}>
             <h2>Template Preview</h2>
             <div className="preview-controls">
-              {selectedTemplate.variables?.map(v => (
-                <div key={v.name} className="preview-var">
-                  <label>{v.description || v.name}</label>
-                  <input
-                    type="text"
-                    value={previewVars[v.name] || ''}
-                    onChange={(e) => setPreviewVars({
-                      ...previewVars,
-                      [v.name]: e.target.value
-                    })}
-                    placeholder={v.example}
-                  />
-                </div>
-              ))}
+              {Array.isArray(selectedTemplate.variables) && selectedTemplate.variables.length > 0 ? (
+                selectedTemplate.variables.map(v => (
+                  <div key={v?.name || Math.random()} className="preview-var">
+                    <label>{v?.description || v?.name || 'Variable'}</label>
+                    <input
+                      type="text"
+                      value={previewVars[v?.name] || ''}
+                      onChange={(e) => setPreviewVars({
+                        ...previewVars,
+                        [v?.name]: e.target.value
+                      })}
+                      placeholder={v?.example || ''}
+                    />
+                  </div>
+                ))
+              ) : (
+                <p className="empty-message">No variables in this template</p>
+              )}
             </div>
             {(() => {
               const rendered = renderTemplate(selectedTemplate.subject, selectedTemplate.body, previewVars);
@@ -370,7 +381,7 @@ const EmailTemplates = () => {
                     <strong>Subject:</strong> {rendered.subject}
                   </div>
                   <div className="preview-body">
-                    {rendered.body.split('\n').map((line, i) => (
+                    {(rendered.body || '').split('\n').map((line, i) => (
                       <p key={i}>{line}</p>
                     ))}
                   </div>
