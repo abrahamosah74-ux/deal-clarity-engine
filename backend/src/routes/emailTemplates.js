@@ -33,9 +33,9 @@ router.post('/', auth, async (req, res) => {
  */
 router.get('/', auth, async (req, res) => {
   try {
-    const { category, isActive = true } = req.query;
+    const { category, isActive } = req.query;
 
-    console.log('Fetching templates for team:', req.user.team);
+    console.log('Fetching templates for team:', req.user.team, 'Category:', category, 'isActive:', isActive);
 
     let query = { team: req.user.team };
 
@@ -43,8 +43,9 @@ router.get('/', auth, async (req, res) => {
       query.category = category;
     }
 
+    // Only filter by isActive if explicitly set
     if (isActive !== undefined) {
-      query.isActive = isActive === 'true';
+      query.isActive = isActive === 'true' || isActive === true;
     }
 
     console.log('Query:', query);
