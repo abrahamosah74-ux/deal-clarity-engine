@@ -105,16 +105,21 @@ const EmailTemplates = () => {
   };
 
   const renderTemplate = (subject, body, variables) => {
-    let rendered = { subject: subject || '', body: body || '' };
-    if (!variables || typeof variables !== 'object') {
+    try {
+      let rendered = { subject: subject || '', body: body || '' };
+      if (!variables || typeof variables !== 'object') {
+        return rendered;
+      }
+      Object.entries(variables).forEach(([key, value]) => {
+        const regex = new RegExp(`{{${key}}}`, 'g');
+        rendered.subject = rendered.subject.replace(regex, String(value || ''));
+        rendered.body = rendered.body.replace(regex, String(value || ''));
+      });
       return rendered;
+    } catch (err) {
+      console.error('Error rendering template:', err);
+      return { subject: subject || '', body: body || '' };
     }
-    Object.entries(variables).forEach(([key, value]) => {
-      const regex = new RegExp(`{{${key}}}`, 'g');
-      rendered.subject = rendered.subject.replace(regex, String(value || ''));
-      rendered.body = rendered.body.replace(regex, String(value || ''));
-    });
-    return rendered;
   };
 
   const resetForm = () => {
@@ -383,19 +388,28 @@ const EmailTemplates = () => {
               )}
             </div>
             {(() => {
-              const rendered = renderTemplate(selectedTemplate.subject, selectedTemplate.body, previewVars);
-              return (
-                <div className="preview-output">
-                  <div className="preview-subject">
-                    <strong>Subject:</strong> {rendered.subject}
+              try {
+                const rendered = renderTemplate(selectedTemplate.subject, selectedTemplate.body, previewVars);
+                return (
+                  <div className="preview-output">
+                    <div className="preview-subject">
+                      <strong>Subject:</strong> {rendered.subject}
+                    </div>
+                    <div className="preview-body">
+                      {(rendered.body || '').split('\n').map((line, i) => (
+                        <p key={i}>{line}</p>
+                      ))}
+                    </div>
                   </div>
-                  <div className="preview-body">
-                    {(rendered.body || '').split('\n').map((line, i) => (
-                      <p key={i}>{line}</p>
-                    ))}
+                );
+              } catch (err) {
+                console.error('Error in preview:', err);
+                return (
+                  <div className="preview-output">
+                    <p>Error rendering preview. Please check the template.</p>
                   </div>
-                </div>
-              );
+                );
+              }
             })()}
             <button onClick={() => setShowPreview(false)} className="btn-primary">
               Close
