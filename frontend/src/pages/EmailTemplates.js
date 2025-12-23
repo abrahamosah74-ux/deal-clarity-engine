@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { FiEdit2, FiTrash2, FiPlus, FiSearch, FiCopy, FiEye } from 'react-icons/fi';
+import { FiEdit2, FiTrash2, FiPlus, FiSearch, FiCopy, FiEye, FiDownload } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 import { api } from '../services/api';
+import { emailTemplatePresets } from '../utils/emailTemplatePresets';
 import './EmailTemplates.css';
 
 const EmailTemplates = () => {
@@ -10,6 +11,7 @@ const EmailTemplates = () => {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [showPresets, setShowPresets] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
   const [previewVars, setPreviewVars] = useState({});
@@ -115,6 +117,20 @@ const EmailTemplates = () => {
     setShowForm(false);
   };
 
+  const handleUsePreset = (preset) => {
+    setFormData({
+      name: preset.name,
+      category: preset.category,
+      subject: preset.subject,
+      body: preset.body,
+      variables: preset.variables,
+      tags: preset.tags
+    });
+    setShowPresets(false);
+    setShowForm(true);
+    toast.success(`Loaded "${preset.name}" template!`);
+  };
+
   const filteredTemplates = templates.filter(t =>
     t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     t.subject.toLowerCase().includes(searchTerm.toLowerCase())
@@ -135,9 +151,14 @@ const EmailTemplates = () => {
     <div className="email-templates-page">
       <div className="templates-header">
         <h1>📧 Email Templates</h1>
-        <button onClick={() => setShowForm(true)} className="btn-primary">
-          <FiPlus /> Create Template
-        </button>
+        <div className="header-buttons">
+          <button onClick={() => setShowPresets(true)} className="btn-secondary">
+            <FiDownload /> Use Template
+          </button>
+          <button onClick={() => setShowForm(true)} className="btn-primary">
+            <FiPlus /> Create Template
+          </button>
+        </div>
       </div>
 
       {/* Filter & Search */}
@@ -198,6 +219,45 @@ const EmailTemplates = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Presets Modal */}
+      {showPresets && (
+        <div className="modal-overlay" onClick={() => setShowPresets(false)}>
+          <div className="modal presets-modal" onClick={(e) => e.stopPropagation()}>
+            <h2>📨 Choose a Template Preset</h2>
+            <p className="presets-description">Select a pre-built template to get started quickly, then customize it for your needs.</p>
+            <div className="presets-grid">
+              {emailTemplatePresets.map(preset => (
+                <div key={preset.id} className="preset-card">
+                  <div className="preset-header">
+                    <h3>{preset.name}</h3>
+                    <span className="preset-category">{preset.category.replace('_', ' ')}</span>
+                  </div>
+                  <p className="preset-subject">📌 {preset.subject}</p>
+                  <p className="preset-preview">{preset.body.substring(0, 100)}...</p>
+                  <div className="preset-meta">
+                    <span>{preset.variables.length} variables</span>
+                    <span className="preset-tags">
+                      {preset.tags.slice(0, 2).map(tag => (
+                        <span key={tag} className="tag">{tag}</span>
+                      ))}
+                    </span>
+                  </div>
+                  <button 
+                    onClick={() => handleUsePreset(preset)} 
+                    className="btn-primary btn-use-preset"
+                  >
+                    <FiDownload /> Use This Template
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button onClick={() => setShowPresets(false)} className="btn-secondary btn-close-modal">
+              Close
+            </button>
+          </div>
         </div>
       )}
 
