@@ -165,7 +165,7 @@ router.delete('/:id', auth, async (req, res) => {
 router.get('/stage/:stage', auth, async (req, res) => {
   try {
     const deals = await Deal.find({
-      userId: req.userId,
+      userId: req.user._id,
       stage: req.params.stage
     }).populate('contact').sort({ createdAt: -1 });
 
@@ -178,15 +178,15 @@ router.get('/stage/:stage', auth, async (req, res) => {
 // Get deal statistics
 router.get('/stats/summary', auth, async (req, res) => {
   try {
-    const totalDeals = await Deal.countDocuments({ userId: req.userId });
-    const wonDeals = await Deal.countDocuments({ userId: req.userId, stage: 'won' });
+    const totalDeals = await Deal.countDocuments({ userId: req.user._id });
+    const wonDeals = await Deal.countDocuments({ userId: req.user._id, stage: 'won' });
     const totalValue = await Deal.aggregate([
-      { $match: { userId: req.userId } },
+      { $match: { userId: req.user._id } },
       { $group: { _id: null, total: { $sum: '$amount' } } }
     ]);
 
     const stageBreakdown = await Deal.aggregate([
-      { $match: { userId: req.userId } },
+      { $match: { userId: req.user._id } },
       { $group: { _id: '$stage', count: { $sum: 1 }, value: { $sum: '$amount' } } }
     ]);
 

@@ -11,7 +11,7 @@ router.get('/sales-summary', auth, async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
 
-    const query = { userId: req.userId };
+    const query = { userId: req.user._id };
     if (startDate || endDate) {
       query.createdAt = {};
       if (startDate) query.createdAt.$gte = new Date(startDate);
@@ -51,7 +51,7 @@ router.get('/activity-report', auth, async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
 
-    const query = { userId: req.userId };
+    const query = { userId: req.user._id };
     if (startDate || endDate) {
       query.createdAt = {};
       if (startDate) query.createdAt.$gte = new Date(startDate);
@@ -81,7 +81,7 @@ router.get('/activity-report', auth, async (req, res) => {
 // Generate forecast report
 router.get('/forecast', auth, async (req, res) => {
   try {
-    const deals = await Deal.find({ userId: req.userId, stage: { $ne: 'won', $ne: 'lost' } });
+    const deals = await Deal.find({ userId: req.user._id, stage: { $ne: 'won', $ne: 'lost' } });
 
     const forecast = deals.reduce((total, deal) => {
       const weightedAmount = (deal.amount || 0) * ((deal.probability || 0) / 100);
@@ -109,7 +109,7 @@ router.get('/forecast', auth, async (req, res) => {
 // Pipeline velocity
 router.get('/velocity', auth, async (req, res) => {
   try {
-    const deals = await Deal.find({ userId: req.userId });
+    const deals = await Deal.find({ userId: req.user._id });
 
     const monthlyData = {};
     deals.forEach(deal => {
