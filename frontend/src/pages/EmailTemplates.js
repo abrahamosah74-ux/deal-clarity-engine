@@ -367,9 +367,10 @@ const EmailTemplates = () => {
             <div className="preview-controls">
               {Array.isArray(selectedTemplate.variables) && selectedTemplate.variables.length > 0 ? (
                 selectedTemplate.variables.map((v, idx) => {
-                  const varName = v?.name || `var_${idx}`;
+                  const varName = v?.name ? String(v.name).trim() : `var_${idx}`;
+                  if (!varName) return null;
                   return (
-                    <div key={varName} className="preview-var">
+                    <div key={`${varName}_${idx}`} className="preview-var">
                       <label>{v?.description || v?.name || 'Variable'}</label>
                       <input
                         type="text"
