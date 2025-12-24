@@ -221,47 +221,43 @@ const Subscriptions = () => {
         </div>
 
         {/* Plans Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
           {/* Free Plan */}
-          <div className={`rounded-2xl shadow-lg overflow-hidden transition-all transform hover:scale-105 ${
-            isCurrentPlan('free') ? 'ring-4 ring-blue-600 bg-white' : 'bg-white hover:shadow-xl'
+          <div className={`rounded-xl shadow-md overflow-hidden transition-all transform hover:shadow-lg ${
+            isCurrentPlan('free') ? 'ring-3 ring-blue-600 bg-white' : 'bg-white'
           }`}>
-            <div className="p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+            <div className="p-6 h-full flex flex-col">
+              <h3 className="text-xl font-bold text-gray-900 mb-1">
                 {plans.free.name}
               </h3>
-              <p className="text-gray-600 text-sm mb-2">{plans.free.description}</p>
-              <p className="text-blue-600 font-semibold text-sm mb-6">{plans.free.headline}</p>
+              <p className="text-blue-600 font-semibold text-xs mb-4">{plans.free.headline}</p>
               
-              <div className="mb-8">
-                <div className="flex items-baseline">
-                  <span className="text-5xl font-bold text-gray-900">Free</span>
-                  <span className="text-gray-600 ml-2">{plans.free.period}</span>
-                </div>
+              <div className="mb-5">
+                <span className="text-4xl font-bold text-gray-900">Free</span>
               </div>
 
               {isCurrentPlan('free') && (
-                <button disabled className="w-full py-3 px-4 bg-blue-100 text-blue-600 rounded-lg font-bold mb-8 cursor-default">
+                <button disabled className="w-full py-2 px-4 bg-blue-100 text-blue-600 rounded-lg font-semibold text-sm mb-4 cursor-default">
                   ✓ Current Plan
                 </button>
               )}
 
               {!isCurrentPlan('free') && (
-                <button disabled className="w-full py-3 px-4 bg-gray-100 text-gray-600 rounded-lg font-bold mb-8 cursor-default">
+                <button disabled className="w-full py-2 px-4 bg-gray-100 text-gray-600 rounded-lg font-semibold text-sm mb-4 cursor-default">
                   Downgrade
                 </button>
               )}
 
-              {/* Features */}
-              <div className="space-y-4">
-                {plans.free.features.map((feature, idx) => (
+              {/* Features - Compact */}
+              <div className="space-y-2 flex-1">
+                {plans.free.features.slice(0, 5).map((feature, idx) => (
                   <div key={idx} className="flex items-center">
                     {feature.included ? (
-                      <FiCheck className="text-green-600 mr-3 flex-shrink-0" size={20} />
+                      <FiCheck className="text-green-600 mr-2 flex-shrink-0" size={18} />
                     ) : (
-                      <FiX className="text-gray-300 mr-3 flex-shrink-0" size={20} />
+                      <FiX className="text-gray-300 mr-2 flex-shrink-0" size={18} />
                     )}
-                    <span className={feature.included ? 'text-gray-900' : 'text-gray-400'}>
+                    <span className={`text-sm ${feature.included ? 'text-gray-900' : 'text-gray-400'}`}>
                       {feature.name}
                     </span>
                   </div>
@@ -271,30 +267,27 @@ const Subscriptions = () => {
           </div>
 
           {/* Monthly Plan */}
-          <div className={`rounded-2xl shadow-lg overflow-hidden transition-all transform hover:scale-105 relative ${
-            isCurrentPlan('monthly') ? 'ring-4 ring-blue-600 bg-white' : 'bg-white hover:shadow-xl'
+          <div className={`rounded-xl shadow-md overflow-hidden transition-all transform hover:shadow-lg relative ${
+            isCurrentPlan('monthly') ? 'ring-3 ring-blue-600 bg-white' : 'bg-white'
           }`}>
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 px-4 text-center font-bold">
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-1.5 px-4 text-center font-bold text-sm">
               🌟 Most Popular
             </div>
-            <div className="p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+            <div className="p-6 h-full flex flex-col">
+              <h3 className="text-xl font-bold text-gray-900 mb-1">
                 {plans.monthly.name}
               </h3>
-              <p className="text-gray-600 text-sm mb-2">{plans.monthly.description}</p>
-              <p className="text-blue-600 font-semibold text-sm mb-6">{plans.monthly.headline}</p>
+              <p className="text-blue-600 font-semibold text-xs mb-4">{plans.monthly.headline}</p>
               
-              <div className="mb-8">
-                <div className="flex items-baseline">
-                  <span className="text-5xl font-bold text-gray-900">
-                    {plans.monthly.priceUSD}
-                  </span>
-                  <span className="text-gray-600 ml-2">/{plans.monthly.period}</span>
-                </div>
+              <div className="mb-5">
+                <span className="text-4xl font-bold text-gray-900">
+                  {plans.monthly.priceUSD}
+                </span>
+                <span className="text-gray-600 text-sm ml-1">/{plans.monthly.period}</span>
               </div>
 
               {isCurrentPlan('monthly') && (
-                <button disabled className="w-full py-3 px-4 bg-blue-100 text-blue-600 rounded-lg font-bold mb-8 cursor-default">
+                <button disabled className="w-full py-2 px-4 bg-blue-100 text-blue-600 rounded-lg font-semibold text-sm mb-4 cursor-default">
                   ✓ Current Plan
                 </button>
               )}
@@ -303,27 +296,27 @@ const Subscriptions = () => {
                 <button
                   onClick={() => handleUpgrade('monthly')}
                   disabled={loading}
-                  className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-400 text-white rounded-lg font-bold mb-8 flex items-center justify-center transition-all"
+                  className="w-full py-2 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-400 text-white rounded-lg font-semibold text-sm mb-4 flex items-center justify-center transition-all"
                 >
                   {loading ? 'Processing...' : (
                     <>
                       {plans.monthly.cta}
-                      <FiArrowRight className="ml-2" />
+                      <FiArrowRight className="ml-1" size={16} />
                     </>
                   )}
                 </button>
               )}
 
-              {/* Features */}
-              <div className="space-y-4">
-                {plans.monthly.features.map((feature, idx) => (
+              {/* Features - Compact */}
+              <div className="space-y-2 flex-1">
+                {plans.monthly.features.slice(0, 6).map((feature, idx) => (
                   <div key={idx} className="flex items-center">
                     {feature.included ? (
-                      <FiCheck className="text-green-600 mr-3 flex-shrink-0" size={20} />
+                      <FiCheck className="text-green-600 mr-2 flex-shrink-0" size={18} />
                     ) : (
-                      <FiX className="text-gray-300 mr-3 flex-shrink-0" size={20} />
+                      <FiX className="text-gray-300 mr-2 flex-shrink-0" size={18} />
                     )}
-                    <span className={feature.included ? 'text-gray-900' : 'text-gray-400'}>
+                    <span className={`text-sm ${feature.included ? 'text-gray-900' : 'text-gray-400'}`}>
                       {feature.name}
                     </span>
                   </div>
@@ -333,32 +326,29 @@ const Subscriptions = () => {
           </div>
 
           {/* Yearly Plan */}
-          <div className={`rounded-2xl shadow-lg overflow-hidden transition-all transform hover:scale-105 relative ${
-            isCurrentPlan('yearly') ? 'ring-4 ring-blue-600 bg-white' : 'bg-white hover:shadow-xl'
+          <div className={`rounded-xl shadow-md overflow-hidden transition-all transform hover:shadow-lg relative ${
+            isCurrentPlan('yearly') ? 'ring-3 ring-blue-600 bg-white' : 'bg-white'
           }`}>
             {plans.yearly.badge && (
-              <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-2 px-4 text-center font-bold">
+              <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-1.5 px-4 text-center font-bold text-sm">
                 {plans.yearly.badge}
               </div>
             )}
-            <div className="p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+            <div className="p-6 h-full flex flex-col">
+              <h3 className="text-xl font-bold text-gray-900 mb-1">
                 {plans.yearly.name}
               </h3>
-              <p className="text-gray-600 text-sm mb-2">{plans.yearly.description}</p>
-              <p className="text-green-600 font-semibold text-sm mb-6">{plans.yearly.headline}</p>
+              <p className="text-green-600 font-semibold text-xs mb-4">{plans.yearly.headline}</p>
               
-              <div className="mb-8">
-                <div className="flex items-baseline">
-                  <span className="text-5xl font-bold text-gray-900">
-                    {plans.yearly.priceUSD}
-                  </span>
-                  <span className="text-gray-600 ml-2">/{plans.yearly.period}</span>
-                </div>
+              <div className="mb-5">
+                <span className="text-4xl font-bold text-gray-900">
+                  {plans.yearly.priceUSD}
+                </span>
+                <span className="text-gray-600 text-sm ml-1">/{plans.yearly.period}</span>
               </div>
 
               {isCurrentPlan('yearly') && (
-                <button disabled className="w-full py-3 px-4 bg-blue-100 text-blue-600 rounded-lg font-bold mb-8 cursor-default">
+                <button disabled className="w-full py-2 px-4 bg-blue-100 text-blue-600 rounded-lg font-semibold text-sm mb-4 cursor-default">
                   ✓ Current Plan
                 </button>
               )}
@@ -367,27 +357,27 @@ const Subscriptions = () => {
                 <button
                   onClick={() => handleUpgrade('yearly')}
                   disabled={loading}
-                  className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-400 text-white rounded-lg font-bold mb-8 flex items-center justify-center transition-all shadow-lg"
+                  className="w-full py-2 px-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-400 text-white rounded-lg font-semibold text-sm mb-4 flex items-center justify-center transition-all"
                 >
                   {loading ? 'Processing...' : (
                     <>
                       {plans.yearly.cta}
-                      <FiArrowRight className="ml-2" />
+                      <FiArrowRight className="ml-1" size={16} />
                     </>
                   )}
                 </button>
               )}
 
-              {/* Features */}
-              <div className="space-y-4">
-                {plans.yearly.features.map((feature, idx) => (
+              {/* Features - Compact */}
+              <div className="space-y-2 flex-1">
+                {plans.yearly.features.slice(0, 6).map((feature, idx) => (
                   <div key={idx} className="flex items-center">
                     {feature.included ? (
-                      <FiCheck className="text-green-600 mr-3 flex-shrink-0" size={20} />
+                      <FiCheck className="text-green-600 mr-2 flex-shrink-0" size={18} />
                     ) : (
-                      <FiX className="text-gray-300 mr-3 flex-shrink-0" size={20} />
+                      <FiX className="text-gray-300 mr-2 flex-shrink-0" size={18} />
                     )}
-                    <span className={feature.included ? 'text-gray-900' : 'text-gray-400'}>
+                    <span className={`text-sm ${feature.included ? 'text-gray-900' : 'text-gray-400'}`}>
                       {feature.name}
                     </span>
                   </div>
