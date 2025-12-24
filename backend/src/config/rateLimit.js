@@ -138,6 +138,27 @@ const emailResendLimiter = rateLimit({
   legacyHeaders: false
 });
 
+// Login rate limiter (prevent brute force attacks)
+const loginLimiter = rateLimit({
+  store,
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 login attempts per 15 minutes per IP
+  message: 'Too many login attempts. Please try again later.',
+  skipSuccessfulRequests: true, // Don't count successful logins
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+// Register rate limiter (prevent account spam)
+const registerLimiter = rateLimit({
+  store,
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3, // 3 registrations per hour per IP
+  message: 'Too many accounts created from this IP. Please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
 module.exports = globalLimiter;
 module.exports.globalLimiter = globalLimiter;
 module.exports.strictLimiter = strictLimiter;
@@ -145,5 +166,7 @@ module.exports.authLimiter = authLimiter;
 module.exports.apiKeyLimiter = apiKeyLimiter;
 module.exports.emailVerificationLimiter = emailVerificationLimiter;
 module.exports.emailResendLimiter = emailResendLimiter;
+module.exports.loginLimiter = loginLimiter;
+module.exports.registerLimiter = registerLimiter;
 module.exports.redisClient = redisClient;
 module.exports.store = store;

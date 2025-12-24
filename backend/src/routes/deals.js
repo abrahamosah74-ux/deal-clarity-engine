@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const { checkDealLimit, checkFeatureAccess } = require('../middleware/featureAccess');
+const { validateObjectId } = require('../middleware/validation');
 const Deal = require('../models/Deal');
 const Contact = require('../models/Contact');
 const Task = require('../models/Task');
@@ -9,10 +10,10 @@ const Task = require('../models/Task');
 // Get all deals for a user
 router.get('/', auth, async (req, res) => {
   // Log incoming requests for debugging device/backend connectivity
-  console.log(`[deals route] incoming GET /api/deals from userId=${req.userId} query=${JSON.stringify(req.query)}`);
+  console.log(`[deals route] incoming GET /api/deals from userId=${req.user._id} query=${JSON.stringify(req.query)}`);
   try {
     const { stage, status, sort } = req.query;
-    let query = { userId: req.userId };
+    let query = { userId: req.user._id };
 
     if (stage) query.stage = stage;
     if (status) query.status = status;
@@ -23,7 +24,8 @@ router.get('/', auth, async (req, res) => {
 
     res.json({ deals });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error fetching deals:', error);
+    res.status(500).json({ error: 'Failed to fetch deals' });
   }
 });
 
@@ -33,7 +35,7 @@ router.post('/', auth, checkDealLimit, async (req, res) => {
     const { name, amount, stage, probability, contact, clarityScore } = req.body;
 
     const deal = new Deal({
-      userId: req.userId,
+      userId: req.user._id,
       name: name || 'New Deal',
       amount: amount || 0,
       stage: stage || 'discovery',
@@ -48,13 +50,13 @@ router.post('/', auth, checkDealLimit, async (req, res) => {
     // If contact email provided, find or create contact
     if (contact && contact.email) {
       let existingContact = await Contact.findOne({
-        userId: req.userId,
+        userId: req.user._id,
         email: contact.email
       });
 
       if (!existingContact) {
         existingContact = new Contact({
-          userId: req.userId,
+          userId: req.user._id,
           firstName: contact.name?.split(' ')[0] || 'Unknown',
           lastName: contact.name?.split(' ')[1] || '',
           email: contact.email,
@@ -69,33 +71,48 @@ router.post('/', auth, checkDealLimit, async (req, res) => {
 
     res.json({ deal, message: 'Deal created successfully' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error creating deal:', error);
+    res.status(500).json({ error: 'Failed to create deal' });
   }
 });
 
 // Get deal by ID
 router.get('/:id', auth, async (req, res) => {
   try {
+    // Validate ObjectId format
+    if (!validateObjectId(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid deal ID format' });
+    }
+
     const deal = await Deal.findOne({
       _id: req.params.id,
-      userId: req.userId
+      userId: req.user._id
     }).populate('contact');
 
-    if (!deal) return res.status(404).json({ error: 'Deal not found' });
+    if (!deal) {
+      console.warn(`⚠️ Unauthorized access attempt: User ${req.user._id} tried to access deal ${req.params.id}`);
+      return res.status(404).json({ error: 'Deal not found' });
+    }
 
     res.json(deal);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error fetching deal:', error);
+    res.status(500).json({ error: 'Failed to fetch deal' });
   }
 });
 
 // Update deal
 router.put('/:id', auth, async (req, res) => {
   try {
+    // Validate ObjectId format
+    if (!validateObjectId(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid deal ID format' });
+    }
+
     const { name, amount, stage, probability, status, clarityScore } = req.body;
 
     const deal = await Deal.findOneAndUpdate(
-      { _id: req.params.id, userId: req.userId },
+      { _id: req.params.id, userId: req.user._id },
       {
         name: name !== undefined ? name : undefined,
         amount: amount !== undefined ? amount : undefined,
@@ -108,23 +125,35 @@ router.put('/:id', auth, async (req, res) => {
       { new: true }
     ).populate('contact');
 
-    if (!deal) return res.status(404).json({ error: 'Deal not found' });
+    if (!deal) {
+      console.warn(`⚠️ Unauthorized update attempt: User ${req.user._id} tried to update deal ${req.params.id}`);
+      return res.status(404).json({ error: 'Deal not found' });
+    }
 
     res.json({ deal, message: 'Deal updated' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error updating deal:', error);
+    res.status(500).json({ error: 'Failed to update deal' });
   }
 });
 
 // Delete deal
 router.delete('/:id', auth, async (req, res) => {
   try {
+    // Validate ObjectId format
+    if (!validateObjectId(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid deal ID format' });
+    }
+
     const deal = await Deal.findOneAndDelete({
       _id: req.params.id,
-      userId: req.userId
+      userId: req.user._id
     });
 
-    if (!deal) return res.status(404).json({ error: 'Deal not found' });
+    if (!deal) {
+      console.warn(`⚠️ Unauthorized delete attempt: User ${req.user._id} tried to delete deal ${req.params.id}`);
+      return res.status(404).json({ error: 'Deal not found' });
+    }
 
     res.json({ message: 'Deal deleted' });
   } catch (error) {

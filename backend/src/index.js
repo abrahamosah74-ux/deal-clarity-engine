@@ -121,6 +121,25 @@ console.log('✓ connectDB() called');
 
 // Security middleware
 console.log('⏳ Setting up middleware...');
+
+// Enforce HTTPS in production
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.header('x-forwarded-proto') !== 'https') {
+      res.redirect(`https://${req.header('host')}${req.url}`);
+    } else {
+      next();
+    }
+  });
+  console.log('✓ HTTPS enforcement enabled');
+}
+
+// Request size limits to prevent payload attacks
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+console.log('✓ Request size limits configured');
+
+// Helmet security headers
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -129,11 +148,20 @@ app.use(helmet({
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:"],
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      connectSrc: ["'self'", process.env.FRONTEND_URL || 'http://localhost:3000']
+      connectSrc: ["'self'", process.env.FRONTEND_URL || 'http://localhost:3000'],
+      frameSrc: ["'self'"] // Prevent clickjacking
     }
   },
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  hsts: {
+    maxAge: 31536000, // 1 year in seconds
+    includeSubDomains: true,
+    preload: true
+  },
+  noSniff: true, // Prevent MIME type sniffing
+  xssFilter: true // Enable XSS protection header
 }));
+console.log('✓ Security headers configured');
 
 // CORS configuration
 const corsOptions = {
@@ -156,22 +184,26 @@ const corsOptions = {
       callback(null, true);
     } else {
       console.warn(`⚠️ CORS blocked origin: ${origin}`);
-      callback(null, true); // Allow anyway for now
+      callback(new Error('CORS policy violation'));
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-Timestamp'],
-  optionsSuccessStatus: 200
+  exposedHeaders: ['X-Total-Count'], // Only expose necessary headers
+  optionsSuccessStatus: 200,
+  maxAge: 86400 // Cache preflight for 24 hours
 };
 
 app.use(cors(corsOptions));
+console.log('✓ CORS configured');
 
 // Handle preflight requests
 app.options('*', cors(corsOptions));
 
 // Rate limiting (shared config)
 app.use('/api/', customLimiter);
+console.log('✓ Rate limiting applied');
 
 // More aggressive rate limiting for auth endpoints
 const authLimiter = rateLimit({

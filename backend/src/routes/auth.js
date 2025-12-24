@@ -4,11 +4,12 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../models/User');
 const { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail } = require('../services/emailService');
-const { emailVerificationLimiter, emailResendLimiter } = require('../config/rateLimit');
+const { emailVerificationLimiter, emailResendLimiter, loginLimiter, registerLimiter } = require('../config/rateLimit');
 const TrackingService = require('../services/trackingService');
+const { sanitizeInput, validateEmail, validatePassword } = require('../middleware/validation');
 
-// Register
-router.post('/register', async (req, res) => {
+// Register - with rate limiting
+router.post('/register', registerLimiter, async (req, res) => {
   try {
     const { name, email, password, company } = req.body;
 
@@ -17,37 +18,42 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Name, email, and password are required' });
     }
 
+    // Sanitize input to prevent XSS
+    const sanitizedName = sanitizeInput(name);
+    const sanitizedEmail = sanitizeInput(email).toLowerCase();
+    const sanitizedCompany = sanitizeInput(company || '');
+
     // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!validateEmail(sanitizedEmail)) {
       return res.status(400).json({ error: 'Invalid email format' });
     }
 
-    // Validate password strength (at least 6 characters)
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    // Validate password strength (12+ chars, upper, lower, number, special char)
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.valid) {
+      return res.status(400).json({ error: passwordValidation.message });
     }
     
     // Check if user exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: sanitizedEmail });
     if (existingUser) {
       return res.status(400).json({ error: 'Email already registered' });
     }
     
-    // Generate verification code
+    // Generate verification code (6 digit)
     const verificationCode = crypto.randomBytes(3).toString('hex').toUpperCase();
     const verificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
     
     console.log('\n🔐 NEW USER REGISTRATION');
-    console.log(`User: ${name} (${email})`);
+    console.log(`User: ${sanitizedName} (${sanitizedEmail})`);
     console.log(`Verification Code: ${verificationCode}`);
 
-    // Create user
+    // Create user with sanitized input
     const user = new User({
-      name,
-      email,
+      name: sanitizedName,
+      email: sanitizedEmail,
       password,
-      company,
+      company: sanitizedCompany,
       role: 'rep',
       emailVerificationCode: verificationCode,
       emailVerificationExpiry: verificationExpiry,
@@ -195,8 +201,8 @@ router.post('/resend-verification', emailResendLimiter, async (req, res) => {
   }
 });
 
-// Login
-router.post('/login', async (req, res) => {
+// Login - with rate limiting
+router.post('/login', loginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -205,9 +211,14 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Email and password are required' });
     }
     
+    // Sanitize input
+    const sanitizedEmail = sanitizeInput(email).toLowerCase();
+
     // Find user
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: sanitizedEmail });
     if (!user) {
+      // Don't reveal if user exists - security best practice
+      console.warn(`⚠️ Login attempt with non-existent email: ${sanitizedEmail}`);
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
@@ -223,6 +234,8 @@ router.post('/login', async (req, res) => {
     // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
+      console.warn(`⚠️ Failed login attempt for user: ${user._id}`);
+      // Don't reveal if password is wrong - security best practice
       return res.status(401).json({ error: 'Invalid email or password' });
     }
     
@@ -238,7 +251,7 @@ router.post('/login', async (req, res) => {
       userAgent: req.get('user-agent')
     });
     
-    // Create token
+    // Create token with secure settings
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
