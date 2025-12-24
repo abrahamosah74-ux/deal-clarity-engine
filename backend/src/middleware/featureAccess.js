@@ -48,7 +48,7 @@ const featureAccessMap = {
     },
     integrations: {
       crm: false,
-      calendar: false,
+      calendar: true,
       email: false
     },
     automations: false,

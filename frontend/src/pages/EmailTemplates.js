@@ -366,10 +366,10 @@ const EmailTemplates = () => {
             <h2>Template Preview</h2>
             <div className="preview-controls">
               {Array.isArray(selectedTemplate.variables) && selectedTemplate.variables.length > 0 ? (
-                selectedTemplate.variables.map(v => {
-                  const varName = v?.name || '';
+                selectedTemplate.variables.map((v, idx) => {
+                  const varName = v?.name || `var_${idx}`;
                   return (
-                    <div key={varName || Math.random()} className="preview-var">
+                    <div key={varName} className="preview-var">
                       <label>{v?.description || v?.name || 'Variable'}</label>
                       <input
                         type="text"
