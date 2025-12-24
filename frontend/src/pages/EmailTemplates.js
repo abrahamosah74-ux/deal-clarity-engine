@@ -111,9 +111,17 @@ const EmailTemplates = () => {
         return rendered;
       }
       Object.entries(variables).forEach(([key, value]) => {
-        const regex = new RegExp(`{{${key}}}`, 'g');
-        rendered.subject = rendered.subject.replace(regex, String(value || ''));
-        rendered.body = rendered.body.replace(regex, String(value || ''));
+        // Skip empty keys to prevent regex errors
+        if (!key || typeof key !== 'string') {
+          return;
+        }
+        try {
+          const regex = new RegExp(`{{${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}}}`, 'g');
+          rendered.subject = rendered.subject.replace(regex, String(value || ''));
+          rendered.body = rendered.body.replace(regex, String(value || ''));
+        } catch (regexErr) {
+          console.warn(`Failed to replace variable ${key}:`, regexErr);
+        }
       });
       return rendered;
     } catch (err) {
